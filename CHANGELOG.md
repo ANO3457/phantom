@@ -5,6 +5,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 ## [Unreleased]
 
 ### Added
+- Maintainer and community files: `MAINTAINERS.md`, `.github/CODEOWNERS`, `.github/dependabot.yml`, `docs/RELEASING.md`, and architecture decision records in `docs/adr/`.
 - Contributor tooling: `docs/CONTRIBUTOR_GUIDE.md` (how to add instructions, encodings, providers, experiments), a rewritten `CONTRIBUTING.md`, issue templates (bug, feature, language proposal, research proposal), a pull request template, and a proposal template (`docs/proposals/0000-template.md`).
 
 ## [0.1.0] — 2026-10-21

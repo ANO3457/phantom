@@ -40,6 +40,24 @@ CI runs the tests on Python 3.10–3.13 on Ubuntu and Windows and the release ch
 | Propose a language change | [Guide §8](docs/CONTRIBUTOR_GUIDE.md#8-proposing-a-language-change) and the proposal template |
 | Report a security issue | [SECURITY.md](SECURITY.md); do not open a public issue |
 
+## Finding something to work on
+
+Issues are labelled so you can pick by size and area:
+
+| Label | Meaning |
+| :--- | :--- |
+| `good first issue` | Small, well specified, no design decisions |
+| `difficulty: easy` / `medium` / `hard` | A few hours / needs some knowledge of the codebase / design decisions or tricky edge cases |
+| `area: cli`, `parser`, `validator`, `runtime`, `generator`, `encodings`, `ci`, `docs` | Where in the code the work is |
+| `mentor available` | A maintainer will help with questions and review |
+| `needs design` | Discuss the approach in the issue before writing code |
+| `help wanted` | Maintainers would welcome a contribution |
+| `feedback` | We want to hear how you use it |
+
+To take an issue, comment on it so nobody duplicates the work. A draft pull request is fine, and
+so is asking questions in the issue. Architecture decisions are recorded in [docs/adr/](docs/adr/);
+read them before proposing changes to the model.
+
 ## Project principles
 
 1. **The specification is the contract.** Language changes start in [SPECIFICATION.md](SPECIFICATION.md).
