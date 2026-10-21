@@ -14,6 +14,8 @@ source .venv/bin/activate                              # Windows: .venv\Scripts\
 pip install -e ".[dev]"
 ```
 
+Or open a ready-made environment with one click: [GitHub Codespaces](https://codespaces.new/hayagrivai-labs/phantom) (uses `.devcontainer/devcontainer.json`; it installs the dev extras and runs the tests).
+
 Optional, for the LLM generator: `pip install -e ".[all]"` (needs Python ≥ 3.10).
 
 ## Before every pull request

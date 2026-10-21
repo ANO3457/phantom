@@ -1,5 +1,14 @@
 # Phantom
 
+[![tests](https://github.com/hayagrivai-labs/phantom/actions/workflows/tests.yml/badge.svg)](https://github.com/hayagrivai-labs/phantom/actions/workflows/tests.yml)
+[![release](https://img.shields.io/github/v/release/hayagrivai-labs/phantom)](https://github.com/hayagrivai-labs/phantom/releases)
+[![license: MIT](https://img.shields.io/github/license/hayagrivai-labs/phantom)](LICENSE)
+[![python](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)](docs/COMPATIBILITY.md)
+[![good first issues](https://img.shields.io/github/issues/hayagrivai-labs/phantom/good%20first%20issue?label=good%20first%20issues&color=7057ff)](https://github.com/hayagrivai-labs/phantom/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[![discussions](https://img.shields.io/github/discussions/hayagrivai-labs/phantom)](https://github.com/hayagrivai-labs/phantom/discussions)
+
+> **Contributors welcome.** New here? Pick a [good first issue](https://github.com/hayagrivai-labs/phantom/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22), read the [Contributor Guide](docs/CONTRIBUTOR_GUIDE.md), and say hello in [Discussions](https://github.com/hayagrivai-labs/phantom/discussions). Adding a new instruction takes four code edits. Issues labelled `mentor available` come with maintainer help. [Open in a Codespace](https://codespaces.new/hayagrivai-labs/phantom) for a ready-to-go environment.
+
 **Phantom** is a dual-layer programming concept: ordinary Python source plus a second, structured *instruction layer* embedded in comments (or in whitespace / zero-width blocks), with no Phantom imports, decorators or wrappers in your code.
 
 > Version **0.1.0** — an early release. Small, tested, and honest about what it does not do (see [Limitations](#current-limitations)).
