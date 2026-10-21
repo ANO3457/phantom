@@ -8,6 +8,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - The repository moved to https://github.com/hayagrivai-labs/phantom (old links redirect). Dependabot is configured to raise minimum versions only when needed.
 
 ### Added
+- README demo and "Why / Try it" sections, a generated terminal demo and social preview image (`scripts/build_assets.py`), and a welcome workflow that greets first-time contributors.
 - `phantom diff --host-only` compares the Python host layer without Phantom instructions, without executing or modifying either file.
 - Discoverability: README badges and a "contributors welcome" banner, a dev container for Codespaces, private vulnerability reporting, pinned starter issues, and a welcome discussion.
 - Maintainer and community files: `MAINTAINERS.md`, `.github/CODEOWNERS`, `.github/dependabot.yml`, `docs/RELEASING.md`, and architecture decision records in `docs/adr/`.

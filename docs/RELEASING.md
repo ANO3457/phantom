@@ -33,7 +33,7 @@ once, so rehearse on TestPyPI first.
    git tag vX.Y.Z && git push origin vX.Y.Z
    gh release create vX.Y.Z dist/* --title "Phantom X.Y.Z" --notes-file notes.md
    ```
-6. Release notes must list only what is implemented and tested, say what was **not** verified
+6. Thank every contributor with a merged pull request by name in the release notes (`gh pr list --state merged --search "merged:>=YYYY-MM-DD"` helps). Release notes must list only what is implemented and tested, say what was **not** verified
    (for example the live Gemini provider, macOS), and keep Phantom C described as research.
 7. Verify the release page, the attached files and the CI run for the tag.
 
