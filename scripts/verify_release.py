@@ -87,7 +87,13 @@ def main() -> int:
     check("long-term research vision" in phantom_c and "not implemented" in phantom_c.lower(),
           "PHANTOM_C.md keeps the vision and states it is not implemented")
 
-    scanned = [p for p in ROOT.rglob("*.md") if ".git" not in p.parts and "node_modules" not in p.parts]
+    skip_parts = {"build", "dist", "node_modules", "site-packages", "__pycache__"}
+    scanned = [
+        p
+        for p in ROOT.rglob("*.md")
+        if not any(part.startswith(".") and part != ".github" for part in p.relative_to(ROOT).parts)
+        and not skip_parts & set(p.relative_to(ROOT).parts)
+    ]
     for pattern in FORBIDDEN_CLAIMS:
         hits = [
             p.relative_to(ROOT).as_posix()
