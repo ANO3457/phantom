@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import hashlib
 
 from phantom.generator.diff import unified_diff
 from phantom.generator.models import GenerationRequest, GenerationResult
@@ -15,12 +16,17 @@ from phantom.generator.validation import validate_candidate
 MAX_SOURCE_CHARS = 100_000
 
 
+def source_digest(source: str) -> str:
+    """SHA-256 of the source text, used to detect a changed input (stale candidate)."""
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()
+
+
 def generate(request: GenerationRequest, provider: LLMProvider) -> GenerationResult:
     """Run the full workflow. Never raises for model or plan problems.
 
     The candidate is returned as text; nothing is written or executed here.
     """
-    result = GenerationResult(success=False)
+    result = GenerationResult(success=False, source_sha256=source_digest(request.source_code))
 
     if len(request.source_code) > MAX_SOURCE_CHARS:
         result.errors.append(f"Source exceeds the {MAX_SOURCE_CHARS}-character request limit")

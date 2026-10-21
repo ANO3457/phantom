@@ -47,6 +47,7 @@ def parse_plan(text: str) -> TransformationPlan:
                 placement_line=raw.get("placement_line", 1),
                 encoding=str(raw.get("encoding", default_enc)),
                 rationale=str(raw.get("rationale", "")),
+                anchor=None if raw.get("anchor") is None else str(raw["anchor"]),
             )
         )
     plan = TransformationPlan(

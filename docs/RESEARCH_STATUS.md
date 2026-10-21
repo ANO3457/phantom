@@ -32,7 +32,8 @@ Labels: **Implemented** · **Experimental** · **Proposed** · **Hypothesis** ·
 | Return-value, file-effect and timing comparison | Proposed | |
 | Sandboxed comparison | Proposed | Use a container today |
 | Additional providers | Proposed | Interface exists |
-| Interactive question flow beyond intent/consent | Proposed | Placement and encoding come from flags |
+| Interactive questions (intent, placement, encoding, consent) | Implemented | Terminal only; non-interactive runs require flags and fail clearly |
+| Clarifying questions about fragments/constraints | Proposed | Input must be valid Python; constraints come from flags |
 
 ## Language roadmap items (see [ROADMAP.md](../ROADMAP.md))
 

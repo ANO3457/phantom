@@ -44,6 +44,7 @@ class PlannedInstruction:
     placement_line: int = 1  # Target line number
     encoding: str = "comment"  # "comment", "whitespace", "unicode"
     rationale: str = ""  # Why this instruction
+    anchor: str | None = None  # Expected text of the line the instruction is inserted before
 
     def to_dict(self) -> dict[str, Any]:
         """Convert planned instruction to a dictionary."""
@@ -53,6 +54,7 @@ class PlannedInstruction:
             "placement_line": self.placement_line,
             "encoding": self.encoding,
             "rationale": self.rationale,
+            "anchor": self.anchor,
         }
 
 
@@ -94,6 +96,7 @@ class GenerationResult:
     host_syntax_valid: bool = False
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    source_sha256: str | None = None  # digest of the input the candidate was built from
 
 
 class ComparisonVerdict(Enum):

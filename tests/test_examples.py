@@ -18,6 +18,7 @@ def _phantom(*args: str) -> subprocess.CompletedProcess:
     return subprocess.run(
         [sys.executable, "-m", "phantom", *args],
         capture_output=True,
+        stdin=subprocess.DEVNULL,
         text=True,
         encoding="utf-8",
         cwd=ROOT,

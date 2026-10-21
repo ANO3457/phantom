@@ -29,6 +29,7 @@ from phantom.generator.provider import (
     get_provider,
     redact,
 )
+from phantom.generator.workflow import source_digest
 from phantom.ir import EncodingMode, PhantomProgram, Severity, ValidationError
 from phantom.parser import parse_file
 from phantom.runtime import PhantomRuntime
@@ -281,7 +282,15 @@ def _confirm_remote(provider_name: str) -> bool:
     )
     if not sys.stdin.isatty():
         return False
-    return input("Continue? [y/N] ").strip().lower() in ("y", "yes")
+    return _ask("Continue? [y/N] ").lower() in ("y", "yes")
+
+
+def _ask(prompt: str, default: str = "") -> str:
+    """Ask a question on a terminal; fall back to `default` if input is unavailable."""
+    try:
+        return input(prompt).strip() or default
+    except EOFError:
+        return default
 
 
 def cmd_generate(args: argparse.Namespace, provider: LLMProvider | None = None) -> int:
@@ -300,6 +309,19 @@ def cmd_generate(args: argparse.Namespace, provider: LLMProvider | None = None) 
             source = f.read()
         name = args.file
 
+    interactive = sys.stdin.isatty() and not args.stdin
+    if args.placement is None:
+        args.placement = "beginning"
+        if interactive:
+            args.placement = _ask(
+                "Where should Phantom be added? [beginning|end|line:N|near:NAME] (beginning) ",
+                "beginning",
+            )
+    if args.encoding is None:
+        args.encoding = "comment"
+        if interactive:
+            args.encoding = _ask("Encoding? [comment|whitespace|unicode] (comment) ", "comment")
+
     encoding = _ENCODING_ALIASES.get(args.encoding)
     if encoding is None:
         print(
@@ -315,7 +337,7 @@ def cmd_generate(args: argparse.Namespace, provider: LLMProvider | None = None) 
     intent = args.intent
     if not intent:
         if sys.stdin.isatty() and not args.stdin:
-            intent = input("What should Phantom do for this program? ").strip()
+            intent = _ask("What should Phantom do for this program? ")
         if not intent:
             print("Error: --intent is required in non-interactive mode", file=sys.stderr)
             return 1
@@ -361,6 +383,17 @@ def cmd_generate(args: argparse.Namespace, provider: LLMProvider | None = None) 
         for e in result.errors:
             print(f"error: {redact(e)}", file=sys.stderr)
         return 2
+
+    if name and os.path.isfile(name):
+        with open(name, encoding="utf-8") as f:
+            current = f.read()
+        if source_digest(current) != result.source_sha256:
+            print(
+                f"error: {name} changed while the candidate was being generated; "
+                "refusing to write a stale candidate",
+                file=sys.stderr,
+            )
+            return 2
 
     print("\nDiff:")
     print(result.diff or "(no changes)")
@@ -528,11 +561,11 @@ def create_parser() -> argparse.ArgumentParser:
     gen_p.add_argument("--intent", help="What the Phantom layer should do")
     gen_p.add_argument(
         "--placement",
-        default="beginning",
-        help="beginning | end | line:N | near:NAME (default: beginning)",
+        default=None,
+        help="beginning | end | line:N | near:NAME (asked interactively if omitted on a terminal; default: beginning)",
     )
     gen_p.add_argument(
-        "--encoding", default="comment", help="comment | whitespace | unicode (default: comment)"
+        "--encoding", default=None, help="comment | whitespace | unicode (asked interactively if omitted on a terminal; default: comment)"
     )
     gen_p.add_argument("--output", "-o", help="Write the candidate here (never the input file)")
     gen_p.add_argument("--dry-run", action="store_true", help="Show the diff; write nothing")

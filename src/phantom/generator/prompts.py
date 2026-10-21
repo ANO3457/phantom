@@ -19,7 +19,8 @@ RESPONSE_SCHEMA = """\
       "instruction_type": "<identifier from the list above>",
       "arguments": [{"type": "string" | "integer", "value": <value>}],
       "placement_line": <1-based line; the instruction is inserted before it>,
-      "rationale": "<why>"
+      "rationale": "<why>",
+      "anchor": "<exact text of the source line the instruction is inserted before; optional>"
     }
   ],
   "expected_behavior": "<host behavior is unchanged>",

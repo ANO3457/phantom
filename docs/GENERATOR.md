@@ -16,6 +16,7 @@ program.py ──► [1 local checks] ──► [2 LLM plan] ──► [3 plan v
 2. **Plan.** The prompt contains the real instruction registry and the numbered source. The model must return a JSON plan (summary, encoding, instructions with arguments and rationale, expected behavior, limitations). Fenced or prose-wrapped JSON is tolerated; nothing else from the model is used.
 3. **Plan validation.** Every instruction is checked against the registry: known identifier, argument count and types, supported encoding, integer line. An invented instruction is rejected. The model's own line numbers are ignored; the locally resolved line is used.
 4. **Transform.** The transformer only *inserts whole lines*. It never edits, moves or removes existing lines. It refuses insertion points inside multi-line strings, brackets or backslash continuations. Line endings (LF/CRLF) are preserved.
+   - **Stale or mismatched patches are rejected.** A plan instruction may carry an `anchor` (the exact text of the line it is inserted before); if the actual line differs, the plan is refused. Separately, `generate` records a SHA-256 of the input and, just before writing `--output`, re-reads the input file; if it changed during generation, the candidate is not written.
 5. **Candidate validation.** The candidate must (a) be valid Python, (b) parse and validate as Phantom, and (c) have a Python AST identical to the original's. (c) is the host-preservation check: comments and blank lines cannot change an AST, so equal ASTs mean the executable program is unchanged.
 6. **Report.** Plan, unified diff, and check results. The candidate is written only to the file named by `--output`, never over the input. **The candidate is never executed by `generate`.**
 
@@ -33,8 +34,8 @@ phantom generate program.py --intent "count requests and note startup" \
 | :--- | :--- |
 | `FILE` / `--stdin` | Program to annotate |
 | `--intent TEXT` | What Phantom should do. Prompted interactively if omitted on a terminal; required otherwise |
-| `--placement` | `beginning` (default), `end`, `line:N`, `near:NAME` |
-| `--encoding` | `comment` (default; `comments` accepted), `whitespace`, `unicode`. `hybrid` is refused by the generator: it cannot be validated reliably for LLM-chosen layouts |
+| `--placement` | `beginning` (default), `end`, `line:N`, `near:NAME`. Asked interactively if omitted on a terminal |
+| `--encoding` | Asked interactively if omitted on a terminal. `comment` (default; `comments` accepted), `whitespace`, `unicode`. `hybrid` is refused by the generator: it cannot be validated reliably for LLM-chosen layouts |
 | `--output PATH` | Write the candidate here. Must differ from the input |
 | `--dry-run` | Show plan and diff; write nothing |
 | `--provider` | `gemini` (the only built-in) |

@@ -85,6 +85,13 @@ def apply_plan(source: str, plan: TransformationPlan) -> str:
                 f"Line {planned.placement_line} is inside a multi-line construct; "
                 "instructions cannot be inserted there"
             )
+        if planned.anchor is not None:
+            actual = lines[at - 1] if at <= total else ""
+            if actual.strip() != planned.anchor.strip():
+                raise TransformError(
+                    f"Stale or mismatched patch: line {at} is {actual.strip()!r}, "
+                    f"but the plan expected {planned.anchor.strip()!r}"
+                )
         text = encode_instruction(_to_instruction(planned), _MODES[planned.encoding])
         inserts.setdefault(at, []).extend(text.split("\n"))
 

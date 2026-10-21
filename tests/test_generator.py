@@ -342,3 +342,48 @@ def types_ns(**kw):
     import types
 
     return types.SimpleNamespace(**kw)
+
+
+class TestStalePatches:
+    def test_anchor_matches(self):
+        plan = parse_plan(_plan(("meta.author", "A")))
+        plan.instructions[0].placement_line = 4
+        plan.instructions[0].anchor = "def greet(name):"
+        assert "def greet(name):" in apply_plan(PROGRAM, plan)
+
+    def test_anchor_mismatch_is_rejected(self):
+        plan = parse_plan(_plan(("meta.author", "A")))
+        plan.instructions[0].placement_line = 4
+        plan.instructions[0].anchor = "def something_else():"
+        with pytest.raises(TransformError, match="Stale or mismatched"):
+            apply_plan(PROGRAM, plan)
+
+    def test_anchor_from_model_response_is_enforced_by_workflow(self):
+        data = json.loads(_plan(("meta.author", "A")))
+        data["instructions"][0]["anchor"] = "def not_here():"
+        res = generate(_request(placement="near:greet"), StaticProvider(json.dumps(data)))
+        assert not res.success and "Stale or mismatched" in res.errors[0]
+
+    def test_result_records_source_digest(self):
+        from phantom.generator.workflow import source_digest
+
+        res = generate(_request(), StaticProvider(_plan(("meta.author", "A"))))
+        assert res.source_sha256 == source_digest(PROGRAM)
+
+    def test_cli_refuses_when_input_changes_during_generation(self, tmp_path, capsys):
+        from phantom.cli import cmd_generate, create_parser
+
+        path = tmp_path / "p.py"
+        path.write_text("print(1)\n")
+        out = tmp_path / "c.py"
+
+        def mutate(prompt):
+            path.write_text("print(2)\n")  # the file changes while the model is "thinking"
+            return _plan(("meta.author", "A"))
+
+        args = create_parser().parse_args(
+            ["generate", str(path), "--intent", "x", "--output", str(out)]
+        )
+        assert cmd_generate(args, StaticProvider(mutate)) == 2
+        assert not out.exists()
+        assert "stale candidate" in capsys.readouterr().err

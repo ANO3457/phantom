@@ -16,6 +16,7 @@ Only items that exist in this repository and are covered by the test suite are l
 - **Generator:** provider interface (Gemini provider, retrying wrapper, static test provider), prompt builder from the real registry, plan parser/validator, local placement resolution (`beginning`, `end`, `line:N`, `near:NAME`), insert-only transformer that refuses unsafe insertion points, candidate validation including an AST-equality host-preservation check, unified diff, single-run behavior comparison with explicit verdicts.
 - **Docs:** specification, language guide, encodings, runtime, generator, architecture, compatibility, troubleshooting, FAQ, threat model, research status, and the Phantom C research documents (`docs/research/`).
 - **Tooling:** pytest suite, Ruff configuration, `scripts/verify_release.py`, GitHub Actions workflows (tests: Python 3.10–3.13 on Ubuntu and Windows; release-checks: gates, build, clean-venv install).
+- Generator rejects stale/mismatched patches (optional per-instruction `anchor`; input digest re-checked before writing) and asks for placement and encoding interactively when run on a terminal without those flags.
 - `phantom generate --plan-file` for offline, reproducible generation examples; `docs/examples/README.md`.
 
 ### Fixed during development (relevant if you saw earlier prototype output)
