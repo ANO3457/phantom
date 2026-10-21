@@ -5,11 +5,12 @@
 | Item | Declared | Actually tested here |
 | :--- | :--- | :--- |
 | Python 3.13 | supported | Yes — full test suite, Windows 11 (CPython 3.13.1) |
-| Python 3.10, 3.11, 3.12 | supported (`requires-python >= 3.10`) | Not run locally; covered only by the CI matrix in `.github/workflows/tests.yml`, **which has not been executed** (no remote) |
-| Windows | supported | Yes (development platform) |
-| Linux, macOS | expected to work | Not tested; CI would test Linux |
+| Python 3.10, 3.11, 3.12, 3.13 | supported (`requires-python >= 3.10`) | Yes — GitHub Actions `tests` workflow, all 8 jobs passed on the first push (commit `f61f342`) |
+| Windows | supported | Yes — local development and CI (`windows-latest`) |
+| Linux | supported | Yes — CI (`ubuntu-latest`) |
+| macOS | expected to work | **Not tested** |
 
-A workflow file existing is not evidence that a platform works. Treat everything not in the "Yes" rows as unverified until CI has run.
+"Yes" means a run was observed. macOS is unverified. The CI results are for the test suite; the `release-checks` workflow (consistency gates, build, clean-venv install and CLI smoke test on Ubuntu / Python 3.12) also passed when triggered manually.
 
 ## Host language
 

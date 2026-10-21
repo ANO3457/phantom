@@ -20,9 +20,9 @@ This guide provides step-by-step instructions for installing and verifying the P
 | Python Version | Status | Notes |
 | :--- | :--- | :--- |
 | **Python 3.9 and older** | :x: Unsupported | Lacks modern typing and standard library features required by Phantom IR. |
-| **Python 3.10** | Declared | Minimum version; covered by the CI matrix only. |
-| **Python 3.11** | Declared | Covered by the CI matrix only. |
-| **Python 3.12** | Declared | Covered by the CI matrix only. |
+| **Python 3.10** | :white_check_mark: Supported | Minimum version; passes the CI test matrix. |
+| **Python 3.11** | :white_check_mark: Supported | Passes the CI test matrix. |
+| **Python 3.12** | :white_check_mark: Supported | Passes the CI test matrix. |
 | **Python 3.13** | :white_check_mark: Supported | The version the test suite was run on. |
 
 ---
@@ -58,7 +58,7 @@ python -m venv .venv
 ### Option 1: Standard Installation from Source
 To install Phantom into your active Python environment:
 ```bash
-# from the repository root (this project has no published package or confirmed remote yet)
+# from the repository root (https://github.com/alok-108/phantom); no package is published on PyPI
 pip install .
 ```
 

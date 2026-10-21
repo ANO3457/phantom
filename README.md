@@ -107,7 +107,7 @@ See [SECURITY.md](SECURITY.md) and [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 - Custom events can be declared but not fired from host code.
 - Whitespace and zero-width encodings are fragile under formatters and normalisation.
 - `verify` compares one run; it is not a proof of equivalence.
-- Tested on Python 3.13 / Windows; the 3.10–3.12 and Linux/macOS CI matrix is defined but has not been run.
+- CI has passed on Python 3.10–3.13 on Ubuntu and Windows; macOS is untested.
 - **Phantom C** (a dual-layer model for compiled languages and a study of observer visibility) is a long-term **research vision**, not implemented: [docs/research/PHANTOM_C.md](docs/research/PHANTOM_C.md). Status of every feature: [docs/RESEARCH_STATUS.md](docs/RESEARCH_STATUS.md).
 
 ## Tests

@@ -114,3 +114,40 @@ def test_build_examples_is_reproducible(tmp_path):
     assert result.returncode == 0, result.stderr
     after = {p.name: p.read_bytes() for p in EXAMPLES.glob("*.py")}
     assert before == after
+
+
+GEN = "docs/examples/generation"
+
+
+def test_generation_example_produces_valid_candidate(tmp_path):
+    out = tmp_path / "candidate.py"
+    result = _phantom(
+        "generate", f"{GEN}/program.py", "--intent", "annotate",
+        "--plan-file", f"{GEN}/plan.json", "--output", str(out),
+    )
+    assert result.returncode == 0, result.stderr
+    assert '+#: phantom:0.1.0 meta.author("Example plan")' in result.stdout
+    assert "Behavior has NOT been executed" in result.stdout
+    assert out.read_text(encoding="utf-8").startswith("#: phantom:0.1.0 meta.author")
+    original = (ROOT / GEN / "program.py").read_text(encoding="utf-8")
+    assert "phantom" not in original  # untouched
+
+    verify = _phantom("verify", f"{GEN}/program.py", str(out))
+    assert verify.returncode == 0
+    assert "Result: Tested equivalence for the single tested run" in verify.stdout
+
+
+def test_generation_example_rejects_unknown_instruction():
+    result = _phantom(
+        "generate", f"{GEN}/program.py", "--intent", "trace",
+        "--plan-file", f"{GEN}/bad_plan.json",
+    )
+    assert result.returncode == 2
+    assert "error: instruction 1 (trace.span): unknown instruction" in result.stderr
+
+
+def test_verify_example_detects_change():
+    result = _phantom("verify", f"{GEN}/program.py", f"{GEN}/changed.py")
+    assert result.returncode == 1
+    assert "Result: Behavior difference detected" in result.stdout
+    assert "-12" in result.stderr and "+13" in result.stderr

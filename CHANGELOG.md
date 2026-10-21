@@ -15,7 +15,8 @@ Only items that exist in this repository and are covered by the test suite are l
 - **CLI:** `check`, `inspect`, `run`, `generate`, `diff`, `verify`; `python -m phantom`.
 - **Generator:** provider interface (Gemini provider, retrying wrapper, static test provider), prompt builder from the real registry, plan parser/validator, local placement resolution (`beginning`, `end`, `line:N`, `near:NAME`), insert-only transformer that refuses unsafe insertion points, candidate validation including an AST-equality host-preservation check, unified diff, single-run behavior comparison with explicit verdicts.
 - **Docs:** specification, language guide, encodings, runtime, generator, architecture, compatibility, troubleshooting, FAQ, threat model, research status, and the Phantom C research documents (`docs/research/`).
-- **Tooling:** pytest suite, Ruff configuration, `scripts/verify_release.py`, GitHub Actions workflows (defined; not yet run on a remote).
+- **Tooling:** pytest suite, Ruff configuration, `scripts/verify_release.py`, GitHub Actions workflows (tests: Python 3.10–3.13 on Ubuntu and Windows; release-checks: gates, build, clean-venv install).
+- `phantom generate --plan-file` for offline, reproducible generation examples; `docs/examples/README.md`.
 
 ### Fixed during development (relevant if you saw earlier prototype output)
 - Zero-width blocks are emitted with a leading `# ` so the file remains valid Python (bare zero-width lines are a `SyntaxError`).
@@ -26,4 +27,4 @@ Only items that exist in this repository and are covered by the test suite are l
 ### Not included (see [ROADMAP.md](ROADMAP.md), [docs/RESEARCH_STATUS.md](docs/RESEARCH_STATUS.md))
 - Phantom C (long-term research vision; documented in `docs/research/PHANTOM_C.md`, not implemented).
 - Firing custom events from host code, in-flow hooks, repository-wide analysis, async dispatch, sandboxing, handler allow-lists.
-- Live verification of the Gemini provider; CI results on other Python versions and platforms.
+- Live verification of the Gemini provider; macOS testing.

@@ -25,6 +25,7 @@ from phantom.generator.provider import (
     LLMProvider,
     ProviderError,
     RetryingProvider,
+    StaticProvider,
     get_provider,
     redact,
 )
@@ -319,6 +320,13 @@ def cmd_generate(args: argparse.Namespace, provider: LLMProvider | None = None) 
             print("Error: --intent is required in non-interactive mode", file=sys.stderr)
             return 1
 
+    if provider is None and args.plan_file:
+        try:
+            with open(args.plan_file, encoding="utf-8") as f:
+                provider = StaticProvider(f.read())
+        except OSError as exc:
+            print(f"Error: cannot read plan file: {exc}", file=sys.stderr)
+            return 1
     if provider is None:
         if not args.allow_remote and not _confirm_remote(args.provider):
             print(
@@ -529,6 +537,10 @@ def create_parser() -> argparse.ArgumentParser:
     gen_p.add_argument("--output", "-o", help="Write the candidate here (never the input file)")
     gen_p.add_argument("--dry-run", action="store_true", help="Show the diff; write nothing")
     gen_p.add_argument("--provider", default="gemini", help="LLM provider (default: gemini)")
+    gen_p.add_argument(
+        "--plan-file",
+        help="Use this local JSON plan instead of calling a provider (offline; nothing is sent)",
+    )
     gen_p.add_argument(
         "--allow-remote",
         action="store_true",

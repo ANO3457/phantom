@@ -38,6 +38,7 @@ phantom generate program.py --intent "count requests and note startup" \
 | `--output PATH` | Write the candidate here. Must differ from the input |
 | `--dry-run` | Show plan and diff; write nothing |
 | `--provider` | `gemini` (the only built-in) |
+| `--plan-file PATH` | Use a local JSON plan instead of calling a provider; offline, nothing is sent (used by [the examples](examples/README.md)) |
 | `--allow-remote` | Consent to sending the source to the provider |
 
 Exit codes: `0` candidate produced and validated, `1` usage/configuration/consent error, `2` generation or validation failed.
