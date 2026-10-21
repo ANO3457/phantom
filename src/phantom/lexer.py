@@ -1,0 +1,143 @@
+"""Phantom Lexer.
+
+Line-oriented lexical analyzer for Phantom source files.
+Tokenizes source code to detect Phantom instructions embedded in comments,
+whitespace blocks, zero-width Unicode blocks, and hybrid headers.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Iterator
+from dataclasses import dataclass
+from enum import Enum
+
+from phantom.grammar import (
+    COMMENT_LINE_PATTERN,
+    HYBRID_HEADER,
+    WS_BEGIN_MARKER,
+    WS_END_MARKER,
+    ZW_BEGIN_MARKER,
+    ZW_END_MARKER,
+    ZW_PERMITTED_CODEPOINTS,
+    ZW_REJECTED_CODEPOINTS,
+)
+
+
+class TokenType(Enum):
+    """Token types emitted by the Phantom lexer."""
+
+    COMMENT_INSTRUCTION = "COMMENT_INSTRUCTION"
+    WS_BEGIN = "WS_BEGIN"
+    WS_END = "WS_END"
+    WS_DATA_LINE = "WS_DATA_LINE"
+    ZW_BEGIN = "ZW_BEGIN"
+    ZW_END = "ZW_END"
+    ZW_DATA_LINE = "ZW_DATA_LINE"
+    HYBRID_HEADER = "HYBRID_HEADER"
+    SOURCE_LINE = "SOURCE_LINE"
+    EOF = "EOF"
+
+
+@dataclass(frozen=True)
+class Token:
+    """A lexical token representing a line or block element in a Phantom source file."""
+
+    type: TokenType
+    value: str
+    line: int
+    column: int = 0
+
+    def __str__(self) -> str:
+        return f"Token({self.type.name}, line={self.line}, col={self.column}, value={self.value!r})"
+
+
+# Combined set of zero-width and invisible code points for line classification
+_ALL_ZW_CODEPOINTS = ZW_PERMITTED_CODEPOINTS | ZW_REJECTED_CODEPOINTS
+
+
+def _contains_zero_width_chars(line: str) -> bool:
+    """Return True if line contains any permitted or rejected zero-width code point."""
+    return any(c in _ALL_ZW_CODEPOINTS for c in line)
+
+
+class LexerState(Enum):
+    """Internal lexer state."""
+
+    NORMAL = "NORMAL"
+    IN_WS_BLOCK = "IN_WS_BLOCK"
+    IN_ZW_BLOCK = "IN_ZW_BLOCK"
+
+
+class PhantomLexer:
+    """Line-oriented lexer that tokenizes Python source files for Phantom instructions."""
+
+    def __init__(self, source: str, filename: str = "<string>") -> None:
+        self.source = source
+        self.filename = filename
+
+    def tokenize(self) -> list[Token]:
+        """Tokenize entire source and return list of tokens ending with EOF."""
+        return list(self.iter_tokens())
+
+    def iter_tokens(self) -> Iterator[Token]:
+        """Yield tokens line by line from source, followed by EOF."""
+        lines = self.source.splitlines()
+        state = LexerState.NORMAL
+
+        for line_idx, raw_line in enumerate(lines):
+            lineno = line_idx + 1
+            line = raw_line.rstrip("\r")
+            stripped = line.strip()
+
+            if state == LexerState.NORMAL:
+                if stripped == HYBRID_HEADER:
+                    col = line.find(HYBRID_HEADER)
+                    yield Token(TokenType.HYBRID_HEADER, line, lineno, col)
+                elif stripped == WS_BEGIN_MARKER:
+                    col = line.find(WS_BEGIN_MARKER)
+                    state = LexerState.IN_WS_BLOCK
+                    yield Token(TokenType.WS_BEGIN, line, lineno, col)
+                elif stripped == ZW_BEGIN_MARKER:
+                    col = line.find(ZW_BEGIN_MARKER)
+                    state = LexerState.IN_ZW_BLOCK
+                    yield Token(TokenType.ZW_BEGIN, line, lineno, col)
+                else:
+                    match = COMMENT_LINE_PATTERN.match(line)
+                    if match:
+                        leading_ws = match.group(1)
+                        col = len(leading_ws)
+                        yield Token(TokenType.COMMENT_INSTRUCTION, line, lineno, col)
+                    else:
+                        yield Token(TokenType.SOURCE_LINE, line, lineno, 0)
+
+            elif state == LexerState.IN_WS_BLOCK:
+                if stripped == WS_END_MARKER:
+                    col = line.find(WS_END_MARKER)
+                    state = LexerState.NORMAL
+                    yield Token(TokenType.WS_END, line, lineno, col)
+                elif all(c in " \t" for c in line):
+                    # Whitespace-only line inside ws block
+                    yield Token(TokenType.WS_DATA_LINE, line, lineno, 0)
+                else:
+                    # Non-whitespace line inside ws block
+                    yield Token(TokenType.SOURCE_LINE, line, lineno, 0)
+
+            elif state == LexerState.IN_ZW_BLOCK:
+                if stripped == ZW_END_MARKER:
+                    col = line.find(ZW_END_MARKER)
+                    state = LexerState.NORMAL
+                    yield Token(TokenType.ZW_END, line, lineno, col)
+                elif _contains_zero_width_chars(line):
+                    # Line containing zero-width chars inside zw block
+                    yield Token(TokenType.ZW_DATA_LINE, line, lineno, 0)
+                else:
+                    yield Token(TokenType.SOURCE_LINE, line, lineno, 0)
+
+        # Emit EOF token at the end
+        eof_line = len(lines) + 1
+        yield Token(TokenType.EOF, "", eof_line, 0)
+
+
+def tokenize(source: str, filename: str = "<string>") -> list[Token]:
+    """Convenience function to tokenize source text."""
+    return PhantomLexer(source, filename).tokenize()

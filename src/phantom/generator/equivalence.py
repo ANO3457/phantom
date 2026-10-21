@@ -1,0 +1,77 @@
+"""Equivalence checks between an original program and a candidate.
+
+Two levels: a static AST comparison (strong evidence the host code is
+untouched) and a dynamic comparison of stdout, stderr and exit code.
+"""
+
+from __future__ import annotations
+
+import ast
+import os
+import tempfile
+
+from phantom.generator.models import ComparisonResult, ComparisonVerdict
+from phantom.host import execute_host_program
+
+
+def host_ast_equal(original: str, candidate: str) -> bool:
+    """True when both sources have identical ASTs (comments and blank lines ignored).
+
+    Raises:
+        SyntaxError: If either source is not valid Python.
+    """
+    return ast.dump(ast.parse(original)) == ast.dump(ast.parse(candidate))
+
+
+def compare_behavior(
+    original: str,
+    candidate: str,
+    timeout: float = 30.0,
+) -> ComparisonResult:
+    """Run both sources and compare their observable behavior."""
+    try:
+        host_ast_equal(original, candidate)
+    except SyntaxError as exc:
+        return ComparisonResult(
+            ComparisonVerdict.VALIDATION_FAILED, notes=[f"Syntax error: {exc.msg}"]
+        )
+
+    with tempfile.TemporaryDirectory(prefix="phantom_verify_") as tmp:
+        paths = []
+        for name, text in (("original.py", original), ("candidate.py", candidate)):
+            path = os.path.join(tmp, name)
+            with open(path, "w", encoding="utf-8", newline="") as f:
+                f.write(text)
+            paths.append(path)
+        orig = execute_host_program(paths[0], timeout=timeout)
+        cand = execute_host_program(paths[1], timeout=timeout)
+
+    result = ComparisonResult(
+        verdict=ComparisonVerdict.EQUIVALENT,
+        original_stdout=orig.stdout,
+        candidate_stdout=cand.stdout,
+        original_stderr=orig.stderr,
+        candidate_stderr=cand.stderr,
+        original_exit_code=orig.exit_code,
+        candidate_exit_code=cand.exit_code,
+    )
+    if orig.exit_code != cand.exit_code:
+        result.differences.append(f"exit code {orig.exit_code} != {cand.exit_code}")
+    if orig.stdout != cand.stdout:
+        result.differences.append("stdout differs")
+    # Tracebacks embed the script path, so stderr is compared with paths masked.
+    if _mask(orig.stderr, paths[0]) != _mask(cand.stderr, paths[1]):
+        result.differences.append("stderr differs")
+
+    if result.differences:
+        result.verdict = ComparisonVerdict.DIFFERENT
+    elif orig.exception or cand.exception:
+        result.verdict = ComparisonVerdict.INCONCLUSIVE
+        result.notes.append("A program timed out or failed to start")
+    else:
+        result.notes.append("Only one input (no arguments, no stdin) was exercised")
+    return result
+
+
+def _mask(text: str, path: str) -> str:
+    return text.replace(path, "<file>")
