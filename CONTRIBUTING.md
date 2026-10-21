@@ -1,145 +1,73 @@
 # Contributing to Phantom
 
-Thank you for your interest in contributing to Phantom! We welcome contributions ranging from bug fixes and documentation enhancements to parser optimizations and new language proposals.
+Thanks for wanting to help. Phantom is an early-stage open-source language project and **contributions of every size are welcome**, from typo fixes to new instructions, providers and research experiments. By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-Please review this guide to get started. All participants are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
+> Want to extend the idea itself (new instruction, encoding, provider, experiment)? Read the **[Contributor Guide](docs/CONTRIBUTOR_GUIDE.md)**. It has a step-by-step walkthrough for each.
 
----
+## Quick start
 
-## Development Environment Setup
-
-Phantom requires **Python ≥ 3.10**.
-
-### 1. Get the source
-Clone the repository from wherever you obtained it and `cd` into it.
-
-### 2. Create and Activate a Virtual Environment
 ```bash
-# On Linux / macOS:
-python3 -m venv .venv
-source .venv/bin/activate
-
-# On Windows (PowerShell):
+git clone https://github.com/alok-108/phantom.git      # or your fork
+cd phantom
 python -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-### 3. Install in Editable Mode
-Install Phantom with development and testing dependencies:
-```bash
+source .venv/bin/activate                              # Windows: .venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 ```
 
-If you plan to work on or test the LLM generator capabilities (requires Google Gemini), install all optional dependencies:
-```bash
-pip install -e ".[all]"
-```
+Optional, for the LLM generator: `pip install -e ".[all]"` (needs Python ≥ 3.10).
 
----
-
-## Running Tests
-
-Phantom uses `pytest` for unit, integration, and round-trip encoding tests.
-
-```bash
-# Run all tests
-pytest
-
-# Run tests with coverage report
-pytest --cov=phantom --cov-report=term-missing
-
-# Run a specific test module
-pytest tests/test_parser.py
-```
-
-Ensure all tests pass before submitting a pull request.
-
----
-
-## Code Quality and Style Guidelines
-
-We enforce consistent formatting and static analysis with `ruff`.
-
-### Code Style Rules
-- **Python Version:** Python 3.10+ compatibility.
-- **Future Imports:** Every module must begin with `from __future__ import annotations`.
-- **Type Annotations:** All functions, methods, and class attributes must be fully type-annotated.
-- **Line Length:** Target line length is 100 characters (soft limit).
-- **Safe Execution:** **Never** use `eval()`, `exec()`, or dynamic code execution on Phantom instruction data or arguments.
-- **Docstrings:** All public modules, classes, and functions must have descriptive Google- or PEP 257-style docstrings.
-
-### Running Linters
-```bash
-# Run ruff linter
-ruff check .
-
-# Automatically apply safe fixes
-ruff check --fix .
-
-# Check code formatting
-ruff format --check .
-
-# Auto-format code
-ruff format .
-```
-
----
-
-## Language Feature Proposals
-
-Phantom maintains a disciplined, specification-first development philosophy. The instruction registry and encoding rules form an authoritative contract for parsers, validators, runtimes, and generators.
-
-If you wish to propose a new instruction, encoding mode, or runtime capability:
-1. **Open an Issue First:** Discuss the motivation and use case on GitHub Discussions or Issues.
-2. **Draft a Formal Specification:** Write a formal update in accordance with [SPECIFICATION.md](SPECIFICATION.md). Specify the instruction identifier, argument signatures, validation constraints, runtime lifecycle behavior, and error conditions.
-3. **Submit the Spec for Review:** Language additions must achieve consensus on grammar design and backward compatibility before implementation code is accepted.
-4. **Implement Full Toolchain Support:** Any new instruction requires updates to:
-   - `phantom.ir` (AST/IR models)
-   - `phantom.grammar` (Instruction registry and argument specs)
-   - Parser and serializer
-   - Static validator
-   - Runtime dispatcher
-   - CLI inspect/check outputs
-   - Documentation and test suites
-
----
-
-## Pull Request Process
-
-1. **Create a Topic Branch:**
-   ```bash
-   git checkout -b feature/my-new-feature
-   ```
-2. **Write Unit Tests:** Ensure every code modification is covered by corresponding unit tests in `tests/`.
-3. **Verify Documentation:** If your change modifies or expands functionality, update the relevant documentation in `docs/` and root specifications.
-4. **Run Verification:**
-   ```bash
-   ruff check .
-   ruff format --check .
-   pytest
-   ```
-5. **Submit PR:** Provide a clear summary of changes, motivation, and link any related issues.
-
----
-
-## Security Vulnerabilities
-
-Please **do not** open public GitHub issues for security vulnerabilities. Review our [Security Policy](SECURITY.md) and report concerns privately to `security@phantom-lang.dev`.
-
----
-
-## Quality gates
-
-Before opening a pull request run:
+## Before every pull request
 
 ```bash
 ruff check src tests scripts
 pytest
-python scripts/verify_release.py
+python scripts/verify_release.py        # needs Python 3.11+
 ```
 
-Documentation that shows command output is checked by `tests/test_examples.py`; if you change CLI output, update the docs and that test together. Do not weaken a test to make it pass.
+CI runs the tests on Python 3.10–3.13 on Ubuntu and Windows and the release checks on Ubuntu. The PR checklist is in [docs/CONTRIBUTOR_GUIDE.md §9](docs/CONTRIBUTOR_GUIDE.md#9-definition-of-done-for-a-pr).
 
-## Research proposals (including Phantom C)
+## Ways to contribute
 
-Proposals touching visibility, detection or observers must follow [docs/research/EXPERIMENTAL_METHOD.md](docs/research/EXPERIMENTAL_METHOD.md). Contributions that provide operational techniques for evading security products or concealing execution from authorized system owners will not be accepted. See [docs/research/PHANTOM_C.md](docs/research/PHANTOM_C.md).
+| You want to… | Start here |
+| :--- | :--- |
+| Fix a bug, improve an error message, add tests | Pick an issue labelled `good first issue`, or open one |
+| Improve docs or add an example | [Guide §1](docs/CONTRIBUTOR_GUIDE.md#1-small-fixes-and-first-contributions) |
+| Add an instruction | [Guide §3](docs/CONTRIBUTOR_GUIDE.md#3-add-an-instruction) (four code edits) |
+| Add or change an encoding | [Guide §4](docs/CONTRIBUTOR_GUIDE.md#4-add-or-change-an-encoding) |
+| Add an LLM provider | [Guide §5](docs/CONTRIBUTOR_GUIDE.md#5-add-an-llm-provider) |
+| Improve the generator or `verify` | [Guide §6](docs/CONTRIBUTOR_GUIDE.md#6-improve-the-generator-and-verify) |
+| Run a visibility / Phantom C experiment | [Guide §7](docs/CONTRIBUTOR_GUIDE.md#7-research-contributions) |
+| Propose a language change | [Guide §8](docs/CONTRIBUTOR_GUIDE.md#8-proposing-a-language-change) and the proposal template |
+| Report a security issue | [SECURITY.md](SECURITY.md); do not open a public issue |
+
+## Project principles
+
+1. **The specification is the contract.** Language changes start in [SPECIFICATION.md](SPECIFICATION.md).
+2. **Honest claims.** Label features *Implemented / Experimental / Proposed / Hypothesis*; document limits; never claim more than is tested.
+3. **Data never becomes code.** No `eval`/`exec`/shell on decoded instructions or model output.
+4. **Parsing and inspection have no side effects.** They never execute or rewrite files.
+5. **No evasion tooling.** Phantom C is a research vision about observability and auditability, not about hiding execution from monitors or authorized owners ([details](docs/research/PHANTOM_C.md)).
+
+## Code style
+
+- Python ≥ 3.10; `from __future__ import annotations` at the top of every module.
+- Type hints on public functions; short docstrings where behavior isn't obvious.
+- `ruff check` is the enforced style tool (line length 100 soft). `ruff format` is **not** enforced and must not be run over `docs/examples/` (whitespace-encoded files are sensitive to formatters).
+- Tests live in `tests/`; every behavior change needs a positive and a negative test. Never weaken a test to make it pass.
+- If you change CLI output, update the docs and `tests/test_examples.py` together.
+
+## Pull requests
+
+1. Open or comment on an issue first for anything larger than a small fix.
+2. Branch from `main` (`git checkout -b fix/short-description`).
+3. Keep PRs focused; include tests and docs in the same PR.
+4. Fill in the PR template. Explain *why*, not only *what*.
+5. A maintainer will review; please respond to feedback in the same PR.
+
+## Reporting bugs and requesting features
+
+Use the issue templates: **Bug report**, **Feature request**, **Language proposal**, **Research proposal**. For bugs, include `phantom --version`, Python version, OS, a minimal source file, the exact command and the full output.
+
+## License
+
+By contributing you agree that your contributions are licensed under the project's [MIT License](LICENSE).

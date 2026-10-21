@@ -59,7 +59,7 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders at [security@phantom-lang.dev](mailto:security@phantom-lang.dev).
+reported to the community leaders at the maintainer, [alok-108](https://github.com/alok-108), via the contact route in [SECURITY.md](SECURITY.md).
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the

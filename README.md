@@ -119,11 +119,15 @@ ruff check src tests scripts
 python scripts/verify_release.py         # release consistency gates
 ```
 
+## Contributing
+
+Contributions of every size are welcome: bug fixes, tests, docs, new instructions, encodings, LLM providers and research experiments. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the step-by-step [Contributor Guide](docs/CONTRIBUTOR_GUIDE.md) (adding an instruction takes four code edits). Ideas are tracked as GitHub issues labelled `good first issue`, `help wanted` and `proposal`.
+
 ## Documentation
 
 [SPECIFICATION](SPECIFICATION.md) · [VISION](VISION.md) · [ROADMAP](ROADMAP.md) · [CHANGELOG](CHANGELOG.md) · [SECURITY](SECURITY.md) · [CONTRIBUTING](CONTRIBUTING.md)
 
-Guides: [Installation](docs/INSTALLATION.md) · [Quickstart](docs/QUICKSTART.md) · [Language](docs/LANGUAGE_GUIDE.md) · [Encodings](docs/ENCODINGS.md) · [Runtime](docs/RUNTIME.md) · [Generator](docs/GENERATOR.md) · [Architecture](docs/ARCHITECTURE.md) · [Compatibility](docs/COMPATIBILITY.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [FAQ](docs/FAQ.md) · [Threat model](docs/THREAT_MODEL.md) · [Research status](docs/RESEARCH_STATUS.md)
+Guides: [Contributor guide](docs/CONTRIBUTOR_GUIDE.md) · [Installation](docs/INSTALLATION.md) · [Quickstart](docs/QUICKSTART.md) · [Language](docs/LANGUAGE_GUIDE.md) · [Encodings](docs/ENCODINGS.md) · [Runtime](docs/RUNTIME.md) · [Generator](docs/GENERATOR.md) · [Architecture](docs/ARCHITECTURE.md) · [Compatibility](docs/COMPATIBILITY.md) · [Troubleshooting](docs/TROUBLESHOOTING.md) · [FAQ](docs/FAQ.md) · [Threat model](docs/THREAT_MODEL.md) · [Research status](docs/RESEARCH_STATUS.md)
 
 Research: [overview](docs/research/README.md) · [Phantom C](docs/research/PHANTOM_C.md) · [Observability](docs/research/OBSERVABILITY.md) · [Method](docs/research/EXPERIMENTAL_METHOD.md)
 
