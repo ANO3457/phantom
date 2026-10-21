@@ -11,7 +11,7 @@
 
 **Phantom** is a dual-layer programming concept: ordinary Python source plus a second, structured *instruction layer* embedded in comments (or in whitespace / zero-width blocks), with no Phantom imports, decorators or wrappers in your code.
 
-> Version **0.1.0** — an early release. Small, tested, and honest about what it does not do (see [Limitations](#current-limitations)).
+> Version **0.1.1** — an early release. Small, tested, and honest about what it does not do (see [Limitations](#current-limitations)).
 
 <p align="center">
   <img src="docs/assets/demo.svg" alt="Terminal demo: python ignores the Phantom lines; phantom check validates them; phantom run applies them; phantom generate proposes them as a diff" width="100%">
@@ -86,7 +86,7 @@ phantom run     docs/examples/comments.py     # apply instructions, run the host
 ```
 
 ```text
-=== Phantom Runtime v0.1.0 ===
+=== Phantom Runtime v0.1.1 ===
 [OK] Validation passed (5 instruction(s), 0 warning(s))
 Hello, World!
 

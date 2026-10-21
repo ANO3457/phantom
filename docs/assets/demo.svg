@@ -18,7 +18,7 @@
 <text x="24" y="150" class="out" xml:space="preserve">0 error(s), 0 warning(s)</text>
 <text x="24" y="170" class="out" xml:space="preserve"></text>
 <text x="24" y="190" class="out"><tspan class="prompt">$ </tspan><tspan class="cmd">phantom run docs/examples/comments.py</tspan></text>
-<text x="24" y="210" class="out" xml:space="preserve">=== Phantom Runtime v0.1.0 ===</text>
+<text x="24" y="210" class="out" xml:space="preserve">=== Phantom Runtime v0.1.1 ===</text>
 <text x="24" y="230" class="out" xml:space="preserve">[OK] Validation passed (5 instruction(s), 0 warning(s))</text>
 <text x="24" y="250" class="out" xml:space="preserve">Hello, World!</text>
 <text x="24" y="270" class="out" xml:space="preserve"></text>

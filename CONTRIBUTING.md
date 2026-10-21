@@ -18,6 +18,24 @@ Or open a ready-made environment with one click: [GitHub Codespaces](https://cod
 
 Optional, for the LLM generator: `pip install -e ".[all]"` (needs Python ≥ 3.10).
 
+## Your first pull request in about 10 minutes
+
+1. Pick an issue labelled [`good first issue`](https://github.com/hayagrivai-labs/phantom/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and comment that you are taking it.
+2. Fork the repo on GitHub, then:
+   ```bash
+   git clone https://github.com/<you>/phantom.git && cd phantom
+   git checkout -b my-change
+   python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\Activate.ps1
+   pip install -e ".[dev]"
+   pytest -q                                              # everything should pass before you start
+   ```
+3. Make the change, and add a test that fails without it.
+4. Run the checks: `ruff check src tests scripts && pytest -q && python scripts/verify_release.py`.
+5. Push and open a pull request; fill in the template. A maintainer approves the first CI run on a fork, so it may take a short while to start.
+6. Respond to review comments by pushing more commits to the same branch.
+
+Stuck at any step? Ask in the issue; that is what `mentor available` is for.
+
 ## Before every pull request
 
 ```bash

@@ -4,6 +4,10 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-10-21
+
+Thanks to @jez-elijah (tests for `generate --stdin`, prompts and consent, #39) and @dbdefault (`phantom diff --host-only`, #40) for their first contributions.
+
 ### Changed
 - The repository moved to https://github.com/hayagrivai-labs/phantom (old links redirect). Dependabot is configured to raise minimum versions only when needed.
 

@@ -103,7 +103,7 @@ python -c "import phantom; print(phantom.__version__)"
 ```
 Expected output:
 ```text
-0.1.0
+0.1.1
 ```
 
 ---
