@@ -121,7 +121,7 @@ python scripts/verify_release.py         # release consistency gates
 
 ## Contributing
 
-Contributions of every size are welcome: bug fixes, tests, docs, new instructions, encodings, LLM providers and research experiments. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the step-by-step [Contributor Guide](docs/CONTRIBUTOR_GUIDE.md) (adding an instruction takes four code edits). Ideas are tracked as GitHub issues labelled `good first issue`, `help wanted`, `mentor available` and `needs design`. Before a pull request run `ruff check src tests scripts`, `pytest` and `python scripts/verify_release.py`. Questions and ideas are welcome in [Discussions](https://github.com/alok-108/phantom/discussions); maintainers are listed in [MAINTAINERS.md](MAINTAINERS.md) and design decisions in [docs/adr/](docs/adr/).
+Contributions of every size are welcome: bug fixes, tests, docs, new instructions, encodings, LLM providers and research experiments. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the step-by-step [Contributor Guide](docs/CONTRIBUTOR_GUIDE.md) (adding an instruction takes four code edits). Ideas are tracked as GitHub issues labelled `good first issue`, `help wanted`, `mentor available` and `needs design`. Before a pull request run `ruff check src tests scripts`, `pytest` and `python scripts/verify_release.py`. Questions and ideas are welcome in [Discussions](https://github.com/hayagrivai-labs/phantom/discussions); maintainers are listed in [MAINTAINERS.md](MAINTAINERS.md) and design decisions in [docs/adr/](docs/adr/).
 
 ## Documentation
 

@@ -7,7 +7,7 @@ Thanks for wanting to help. Phantom is an early-stage open-source language proje
 ## Quick start
 
 ```bash
-git clone https://github.com/alok-108/phantom.git      # or your fork
+git clone https://github.com/hayagrivai-labs/phantom.git      # or your fork
 cd phantom
 python -m venv .venv
 source .venv/bin/activate                              # Windows: .venv\Scripts\Activate.ps1
