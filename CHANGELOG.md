@@ -4,6 +4,9 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Documentation
+- Add Hindi translations of the README and Quickstart guide.
+
 ## [0.1.1] — 2026-10-21
 
 Thanks to @jez-elijah (tests for `generate --stdin`, prompts and consent, #39) and @dbdefault (`phantom diff --host-only`, #40) for their first contributions.
