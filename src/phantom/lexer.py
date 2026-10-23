@@ -13,6 +13,7 @@ from enum import Enum
 
 from phantom.grammar import (
     COMMENT_LINE_PATTERN,
+    COMMENT_VERSION_CANDIDATE_PATTERN,
     HYBRID_HEADER,
     WS_BEGIN_MARKER,
     WS_END_MARKER,
@@ -102,7 +103,7 @@ class PhantomLexer:
                     state = LexerState.IN_ZW_BLOCK
                     yield Token(TokenType.ZW_BEGIN, line, lineno, col)
                 else:
-                    match = COMMENT_LINE_PATTERN.match(line)
+                    match = COMMENT_LINE_PATTERN.match(line) or COMMENT_VERSION_CANDIDATE_PATTERN.match(line)
                     if match:
                         leading_ws = match.group(1)
                         col = len(leading_ws)

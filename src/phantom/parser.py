@@ -30,11 +30,11 @@ from phantom.ir import (
 from phantom.lexer import Token, TokenType, tokenize
 
 _INSTRUCTION_TEXT_PATTERN = re.compile(
-    r"^phantom:(\d+\.\d+\.\d+)\s+([a-z][a-z0-9]*\.[a-z][a-z0-9_]*)\(\s*(.*?)\s*\)$"
+    r"^phantom:([0-9]+\.[0-9]+\.[0-9]+)\s+([a-z][a-z0-9]*\.[a-z][a-z0-9_]*)\(\s*(.*?)\s*\)$"
 )
 _INVISIBLE = ZW_PERMITTED_CODEPOINTS | ZW_REJECTED_CODEPOINTS
 _STRING_TOKEN =re.compile(r'"((?:[^"\\]|\\.)*)"')
-_INTEGER_TOKEN = re.compile(r"-?\d+")
+_INTEGER_TOKEN = re.compile(r"-?[0-9]+")
 _ESCAPES = {"n": "\n", "t": "\t", "r": "\r", '"': '"', "\\": "\\"}
 
 
@@ -160,8 +160,13 @@ def parse(content: str, filepath: str = "<string>") -> PhantomProgram:
             hybrid = True
         elif tok.type == TokenType.COMMENT_INSTRUCTION:
             m = COMMENT_LINE_PATTERN.match(tok.value)
-            assert m is not None
             loc = SourceLocation(filepath, tok.line, tok.column, EncodingMode.COMMENT)
+            if m is None:
+                errors.append(ParseError(
+                    "Malformed instruction version: expected ASCII digits in major.minor.patch",
+                    loc,
+                ))
+                continue
             if hybrid:
                 key = f"phantom:{m.group(2)} {m.group(3)}({m.group(4)})"
                 if key in seen_hybrid:
