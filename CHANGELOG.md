@@ -23,6 +23,9 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - Tests for runtime initialization errors, denied instructions, version metadata, and handler resolution diagnostics.
 - Contributor automation: comment `/take` to be assigned a `help wanted` issue (and `/release` to give it back), a daily sweep that nudges and then releases inactive claims, path-based PR labels, and a thank-you on a first merged pull request.
 
+### Security
+- Opt-in security controls for `phantom run`: `--deny CAP` / `--allow-only CAP` (also on `check` and `inspect`) enforce a capability policy before anything runs (#30), and `--handlers-from DIR` / `--allow-handler PATTERN` decide which `event.on` handler modules may be imported, before importing them (#31).
+
 ## [0.1.1] — 2026-10-21
 
 Thanks to @jez-elijah (tests for `generate --stdin`, prompts and consent, #39) and @dbdefault (`phantom diff --host-only`, #40) for their first contributions.
