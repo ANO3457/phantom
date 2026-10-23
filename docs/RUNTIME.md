@@ -29,7 +29,8 @@ An instruction is not "triggered" when execution passes the line it is written o
 - **Handlers** are dotted paths such as `"events.announce_done"`. They are resolved by import when the event fires, relative to the host's directory.
 - **Order** is registration order, deterministically.
 - **Handler arguments**: keyword arguments the handler declares by name, or all of them if it accepts `**kwargs`; a handler taking no arguments is called with none. `pre_execute`: `host_file`, `args`. `post_execute`: `host_file`, `result` (exit_code, stdout, stderr, duration_ms). `shutdown`: none.
-- **Errors**: an unresolvable handler or a handler exception becomes an `ERROR` diagnostic; the remaining handlers still run.
+- **Signature checks** happen before invocation. Only parameters accepting keywords receive matching event arguments; required positional-only parameters cannot be supplied by an event. If a callable has no inspectable signature, it receives the full event payload as keyword arguments once.
+- **Errors**: an unresolvable handler, incompatible signature, or handler exception becomes one `ERROR` diagnostic; the remaining handlers still run. Each registered handler is invoked at most once per event firing. Exceptions raised inside a handler, including `TypeError` and `ValueError`, never trigger a retry.
 - **Duplicates/missing**: redeclaring an event is a validation warning and a runtime error (reported, not fatal). Registering for an undeclared event is a validation error.
 
 See `docs/examples/events.py`:

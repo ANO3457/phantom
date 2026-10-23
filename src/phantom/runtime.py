@@ -286,23 +286,27 @@ class PhantomRuntime:
     def _invoke_callback(
         self, fn: Callable[..., Any], kwargs: dict[str, Any]
     ) -> Any:
-        """Invoke a callback with matching keyword arguments, or no arguments."""
+        """Select matching keyword arguments, then invoke the callback exactly once."""
         try:
             sig = inspect.signature(fn)
+        except (ValueError, TypeError):
+            # Some extension callables have no signature. Call once with the
+            # event payload; an exception from the handler must never trigger a retry.
+            accepted = kwargs
+        else:
             has_var_kw = any(
                 p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
             )
-            if has_var_kw:
-                return fn(**kwargs)
-            accepted = {k: v for k, v in kwargs.items() if k in sig.parameters}
-            if accepted or len(sig.parameters) == 0:
-                return fn(**accepted)
-            return fn(**kwargs)
-        except (ValueError, TypeError):
-            try:
-                return fn(**kwargs)
-            except TypeError:
-                return fn()
+            accepted = kwargs if has_var_kw else {
+                k: v for k, v in kwargs.items()
+                if k in sig.parameters and sig.parameters[k].kind in (
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    inspect.Parameter.KEYWORD_ONLY,
+                )
+            }
+            sig.bind(**accepted)
+
+        return fn(**accepted)
 
     def fire_event(self, event_name: str, **kwargs: Any) -> list[Any]:
         """Fire a declared event and execute all registered handlers in order.
