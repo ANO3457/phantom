@@ -37,7 +37,14 @@ def _instruction_to_text(instruction: str | PhantomInstruction) -> str:
         args_formatted = []
         for arg in instruction.arguments:
             if arg.type == ArgumentType.STRING:
-                escaped = str(arg.value).replace("\\", "\\\\").replace('"', '\\"')
+                escaped = (
+                    str(arg.value)
+                    .replace("\\", "\\\\")
+                    .replace('"', '\\"')
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r")
+                    .replace("\t", "\\t")
+                )
                 args_formatted.append(f'"{escaped}"')
             else:
                 args_formatted.append(str(arg.value))
