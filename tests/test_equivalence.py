@@ -68,6 +68,21 @@ class TestCandidateValidation:
         report = validate_candidate(BASE, '#: phantom:0.1.0 event.on("x", "a.b")\n' + BASE)
         assert not report.phantom_valid and report.host_preserved
 
+    def test_license_valid(self):
+        report = validate_candidate(BASE, '#: phantom:0.1.0 meta.license("MIT")\n' + BASE)
+        assert report.passed and not report.errors
+
+    def test_license_wrong_type(self):
+        report = validate_candidate(BASE, '#: phantom:0.1.0 meta.license(123)\n' + BASE)
+        assert not report.passed
+        # Check for the argument name or the expected type
+        assert any("spdx" in e or "STRING" in e for e in report.errors)
+
+    def test_license_wrong_arg_count(self):
+        report = validate_candidate(BASE, '#: phantom:0.1.0 meta.license("MIT", "extra")\n' + BASE)
+        assert not report.passed
+        # Check for the argument name or a word indicating the count issue
+        assert any("spdx" in e or "arity" in e or "argument" in e for e in report.errors)
 
 def test_identical_programs_that_print_their_own_path_are_equivalent():
     source = "import sys\nprint(__file__)\nprint(repr(__file__))\nprint(sys.argv[0])\n"

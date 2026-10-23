@@ -26,6 +26,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - Tests for runtime initialization errors, denied instructions, version metadata, and handler resolution diagnostics.
 - Experimental VS Code extension (`editors/vscode`): decodes hidden whitespace and zero-width instruction blocks on hover, reports them and stray invisible or bidirectional characters in the Problems panel, and highlights comment-encoded instructions. Its decoding is cross-checked against the Python encoders through generated fixtures (#36).
 - Contributor automation: comment `/take` to be assigned a `help wanted` issue (and `/release` to give it back), a daily sweep that nudges and then releases inactive claims, path-based PR labels, and a thank-you on a first merged pull request.
+- `meta.license(spdx)` instruction: records an SPDX license identifier as metadata (capability `cap.metadata`).
 
 ### Security
 - Opt-in security controls for `phantom run`: `--deny CAP` / `--allow-only CAP` (also on `check` and `inspect`) enforce a capability policy before anything runs (#30), and `--handlers-from DIR` / `--allow-handler PATTERN` decide which `event.on` handler modules may be imported, before importing them (#31).
