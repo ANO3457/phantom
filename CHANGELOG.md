@@ -10,6 +10,8 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - A line that starts with `#: phantom:` but does not match the grammar is now a parse error (it used to be silently ignored); a complete instruction followed by a trailing comment is ignored with a warning.
 - `generate` fails when an inserted instruction cannot be read back from the candidate (the number of Phantom instructions must grow by exactly the number planned).
 - Integer arguments and instruction versions now require ASCII digits in all encodings. Arabic-Indic, fullwidth, and other Unicode digits produce parse errors instead of being accepted as numbers; malformed versions in otherwise complete comment instructions are diagnosed instead of ignored.
+- The host timeout is enforced even when the host leaves a child process holding the output pipes: the whole process tree is killed on expiry (#53).
+- `phantom verify` no longer reports identical programs as different when they print their own path or fail with the same traceback at shifted line numbers, and no longer reports two programs that both crash identically as equivalent (now inconclusive) (#52).
 - Preserve instruction-specific messages when capability checks fail, including all missing capabilities.
 - Event handlers are invoked at most once per registration when an event fires, even if they raise `TypeError` or `ValueError`; signature validation no longer retries failing handlers or replaces their original error.
 
