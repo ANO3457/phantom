@@ -15,6 +15,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - Add Hindi translations of the README and Quickstart guide.
 
 ### Added
+- Tests for runtime initialization errors, denied instructions, version metadata, and handler resolution diagnostics.
 - Contributor automation: comment `/take` to be assigned a `help wanted` issue (and `/release` to give it back), a daily sweep that nudges and then releases inactive claims, path-based PR labels, and a thank-you on a first merged pull request.
 
 ## [0.1.1] — 2026-10-21
