@@ -140,6 +140,21 @@ Expected output:
   pip install --upgrade pip
   ```
 
+## Shell Completions
+
+Fish users get tab completion for subcommands and flags from
+`scripts/completions/phantom.fish`. Copy or symlink it into fish's
+completions directory, then start a new shell:
+
+```bash
+cp scripts/completions/phantom.fish ~/.config/fish/completions/phantom.fish
+```
+
+After that, `phantom <TAB>` suggests the subcommands (`check`,
+`inspect`, `run`, `generate`, `diff`, `verify`), and
+`phantom check --<TAB>` or `phantom run --<TAB>` suggest that
+subcommand's flags.
+
 ---
 
 ## Next Steps
