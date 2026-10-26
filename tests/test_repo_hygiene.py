@@ -47,3 +47,7 @@ def test_project_source_contains_no_invisible_or_bidirectional_characters():
         if found:
             problems[str(path.relative_to(ROOT))] = found
     assert problems == {}, f"hidden characters in project files: {problems}"
+
+def test_py_typed_exists():
+assert (ROOT / "src" / "phantom" / "py.typed").is_file()
+
