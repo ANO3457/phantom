@@ -142,6 +142,18 @@ Expected output:
 
 ## Shell Completions
 
+Bash and zsh users get tab completion for subcommands and flags from
+`scripts/completions/phantom.bash` and `scripts/completions/phantom.zsh`.
+For bash, source the script from `~/.bashrc`:
+
+```bash
+source scripts/completions/phantom.bash
+```
+
+For zsh, copy the script to a directory on `$fpath` as `_phantom`
+(e.g. `~/.zsh/completions/_phantom`) and run
+`autoload -Uz compinit && compinit`.
+
 Fish users get tab completion for subcommands and flags from
 `scripts/completions/phantom.fish`. Copy or symlink it into fish's
 completions directory, then start a new shell:
@@ -149,7 +161,6 @@ completions directory, then start a new shell:
 ```bash
 cp scripts/completions/phantom.fish ~/.config/fish/completions/phantom.fish
 ```
-
 After that, `phantom <TAB>` suggests the subcommands (`check`,
 `inspect`, `run`, `generate`, `diff`, `verify`), and
 `phantom check --<TAB>` or `phantom run --<TAB>` suggest that
