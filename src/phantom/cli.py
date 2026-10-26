@@ -162,6 +162,11 @@ def cmd_check(args: argparse.Namespace) -> int:
         return 2 if error_count > 0 else 0
 
     for diag in all_diagnostics:
+        if (
+            getattr(args, "quiet", False)
+            and getattr(diag, "severity", None) != Severity.ERROR
+        ):
+            continue
         out = (
             sys.stderr
             if getattr(diag, "severity", None) == Severity.ERROR
@@ -169,7 +174,8 @@ def cmd_check(args: argparse.Namespace) -> int:
         )
         print(diagnostics.render(diag, source_text), file=out)
 
-    print(diagnostics.summary(all_diagnostics))
+    if not getattr(args, "quiet", False):
+        print(diagnostics.summary(all_diagnostics))
 
     if error_count > 0:
         return 2
@@ -300,7 +306,8 @@ def cmd_run(args: argparse.Namespace) -> int:
     if host_args and host_args[0] == "--":
         host_args = host_args[1:]
 
-    print(f"=== Phantom Runtime v{__version__} ===")
+    if not getattr(args, "quiet", False):
+        print(f"=== Phantom Runtime v{__version__} ===")
 
     try:
         program = load_and_parse(filepath)
@@ -330,9 +337,10 @@ def cmd_run(args: argparse.Namespace) -> int:
         )
         return 2
 
-    print(
-        f"[OK] Validation passed ({program.instruction_count} instruction(s), {warning_count} warning(s))"
-    )
+    if not getattr(args, "quiet", False):
+        print(
+            f"[OK] Validation passed ({program.instruction_count} instruction(s), {warning_count} warning(s))"
+        )
 
     if grant is not None and Capability.STDIO not in grant:
         print(
@@ -367,7 +375,7 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     # Diagnostics output
     records = runtime.get_diagnostics()
-    if records:
+    if records and not getattr(args, "quiet", False):
         print("\n--- Phantom Diagnostics ---")
         for record in records:
             print(str(record))
@@ -658,6 +666,7 @@ def create_parser() -> argparse.ArgumentParser:
         "check", help="Check and validate Phantom instructions in a file"
     )
     check_p.add_argument("file", help="Source file to check")
+    check_p.add_argument("-q", "--quiet", action="store_true", help="Suppress non-error output")
     check_p.add_argument(
         "--strict",
         action="store_true",
@@ -688,6 +697,7 @@ def create_parser() -> argparse.ArgumentParser:
         "run", help="Validate and run host program with Phantom runtime"
     )
     run_p.add_argument("file", help="Source file to run")
+    run_p.add_argument("-q", "--quiet", action="store_true", help="Suppress non-error output")
     run_p.add_argument(
         "--timeout",
         type=float,

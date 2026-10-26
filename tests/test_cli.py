@@ -60,6 +60,15 @@ def test_cli_check_not_found(capsys):
     assert "not found" in err.lower()
 
 
+def test_cli_check_quiet_suppresses_summary(capsys):
+    target = FIXTURES_DIR / "valid_comments.py"
+    ret = main(["check", "-q", str(target)])
+
+    assert ret == 0
+    out, _ = capsys.readouterr()
+    assert "0 error(s)" not in out
+
+
 def test_cli_inspect_text(capsys):
     target = FIXTURES_DIR / "valid_comments.py"
     ret = main(["inspect", str(target)])
@@ -128,6 +137,16 @@ def test_cli_run_valid(capsys):
     assert ret == 0
     out, _ = capsys.readouterr()
     assert "=== Phantom Runtime" in out
+    assert "Hello, World!" in out
+
+
+def test_cli_run_quiet_suppresses_banner(capsys):
+    target = FIXTURES_DIR / "valid_plain.py"
+    ret = main(["run", "-q", str(target)])
+
+    assert ret == 0
+    out, _ = capsys.readouterr()
+    assert "=== Phantom Runtime" not in out
     assert "Hello, World!" in out
 
 
