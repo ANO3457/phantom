@@ -48,7 +48,77 @@ def test_project_source_contains_no_invisible_or_bidirectional_characters():
             problems[str(path.relative_to(ROOT))] = found
     assert problems == {}, f"hidden characters in project files: {problems}"
 
-#fixed indentation
-
 def test_py_typed_exists():
     assert (ROOT / "src" / "phantom" / "py.typed").is_file()
+
+
+# Bash and zsh completion scripts must offer every subcommand and, scoped to
+# each subcommand's case branch, every flag the live CLI accepts for it.
+# Flags are the long form without dashes; value lists are checked separately.
+COMPLETION_SCRIPTS = {
+    "bash": ROOT / "scripts" / "completions" / "phantom.bash",
+    "zsh": ROOT / "scripts" / "completions" / "phantom.zsh",
+}
+EXPECTED_COMPLETION_SUBCOMMANDS = ("check", "inspect", "run", "generate", "diff", "verify")
+EXPECTED_COMPLETION_FLAGS = {
+    "check": ("strict", "format", "deny", "allow-only"),
+    "inspect": ("json", "strict", "deny", "allow-only"),
+    "run": ("timeout", "deny", "allow-only", "handlers-from", "allow-handler"),
+    "generate": ("stdin", "intent", "placement", "encoding", "output", "dry-run", "provider", "plan-file", "allow-remote"),
+    "diff": ("host-only", "no-color"),
+    "verify": ("timeout",),
+}
+EXPECTED_COMPLETION_VALUES = ("sarif", "whitespace", "unicode")
+
+
+def _completion_branch(text: str, subcommand: str) -> str:
+    lines = text.split("\n")
+    start = next(i for i, line in enumerate(lines) if line.strip() == f"{subcommand})")
+    end = next(i for i in range(start, len(lines)) if lines[i].strip() == ";;")
+    return "\n".join(lines[start:end])
+
+
+def test_shell_completion_scripts_cover_cli():
+    for shell, path in COMPLETION_SCRIPTS.items():
+        assert path.exists(), f"scripts/completions/{path.name} is missing"
+        text = path.read_text(encoding="utf-8")
+        for subcommand in EXPECTED_COMPLETION_SUBCOMMANDS:
+            assert subcommand in text, f"{shell} completions miss subcommand {subcommand}"
+            branch = _completion_branch(text, subcommand)
+            for flag in EXPECTED_COMPLETION_FLAGS[subcommand]:
+                assert f"--{flag}" in branch, (
+                    f"{shell} completions miss --{flag} scoped to {subcommand}"
+                )
+        for value in EXPECTED_COMPLETION_VALUES:
+            assert value in text, f"{shell} completions miss the {value} value"
+
+
+FISH_COMPLETION = ROOT / "scripts" / "completions" / "phantom.fish"
+EXPECTED_FISH_SUBCOMMANDS = ("check", "inspect", "run", "generate", "diff", "verify")
+# Flags the completion script must offer per subcommand (long form, no dashes).
+EXPECTED_FISH_FLAGS = {
+    "check": ("strict", "format", "deny", "allow-only"),
+    "run": ("timeout", "deny", "allow-only", "handlers-from", "allow-handler"),
+}
+
+
+def test_fish_completion_script_covers_cli():
+    assert FISH_COMPLETION.exists(), "scripts/completions/phantom.fish is missing"
+    text = FISH_COMPLETION.read_text(encoding="utf-8")
+    for subcommand in EXPECTED_FISH_SUBCOMMANDS:
+        assert f"-a {subcommand}" in text, f"fish completions miss subcommand {subcommand}"
+    for subcommand, flags in EXPECTED_FISH_FLAGS.items():
+        condition = f"__fish_seen_subcommand_from {subcommand}"
+        for flag in flags:
+            line = next(
+                (
+                    line
+                    for line in text.splitlines()
+                    if f"-l {flag}" in line and condition in line
+                ),
+                None,
+            )
+            assert line is not None, (
+                f"fish completions miss --{flag} scoped to {subcommand}"
+            )
+    assert "sarif" in text, "fish completions miss the sarif output format"

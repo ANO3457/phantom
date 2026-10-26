@@ -60,3 +60,35 @@ def host_layer_diff(original: str, candidate: str) -> str:
         "original (host layer)",
         "candidate (host layer)",
     )
+
+
+_ADD = "\033[32m"
+_REMOVE = "\033[31m"
+_HUNK = "\033[36m"
+_RESET = "\033[0m"
+
+
+def format_diff_colored(diff_text: str, colored: bool = True) -> str:
+    """Colorize a unified diff, or return it unchanged when ``colored`` is False.
+
+    Added lines are green, removed lines red, and hunk headers cyan; the
+    ``---``/``+++`` file headers take the color of their first character
+    (``-``/``+``), and context lines stay plain. Callers only need to pass
+    ``colored=False`` (for ``NO_COLOR`` / ``--no-color``) to get plain text.
+    """
+    if not colored:
+        return diff_text
+    out: list[str] = []
+    for line in diff_text.splitlines(keepends=True):
+        body, newline = (line[:-1], "\n") if line.endswith("\n") else (line, "")
+        if body.startswith("+"):
+            code = _ADD
+        elif body.startswith("-"):
+            code = _REMOVE
+        elif body.startswith("@"):
+            code = _HUNK
+        else:
+            out.append(line)
+            continue
+        out.append(f"{code}{body}{_RESET}{newline}")
+    return "".join(out)
