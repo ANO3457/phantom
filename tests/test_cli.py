@@ -275,6 +275,75 @@ def test_cli_diff(capsys, tmp_path):
     assert "+print('world')" in out
 
 
+def _diff_pair(tmp_path):
+    f1 = tmp_path / "a.py"
+    f2 = tmp_path / "b.py"
+    f1.write_text("print('hello')\n")
+    f2.write_text("print('world')\n")
+    return f1, f2
+
+
+def test_cli_diff_is_colored_by_default(capsys, tmp_path, monkeypatch):
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    f1, f2 = _diff_pair(tmp_path)
+    assert main(["diff", str(f1), str(f2)]) == 0
+    out, _ = capsys.readouterr()
+    assert "\033[31m-print('hello')\033[0m" in out
+    assert "\033[32m+print('world')\033[0m" in out
+
+
+def test_cli_diff_no_color_env(capsys, tmp_path, monkeypatch):
+    monkeypatch.setenv("NO_COLOR", "1")
+    f1, f2 = _diff_pair(tmp_path)
+    assert main(["diff", str(f1), str(f2)]) == 0
+    out, _ = capsys.readouterr()
+    assert "\033[" not in out
+    assert "-print('hello')" in out
+    assert "+print('world')" in out
+
+
+def test_cli_diff_no_color_env_empty_value_still_disables_color(
+    capsys, tmp_path, monkeypatch
+):
+    # NO_COLOR suppresses color when present, regardless of its value.
+    monkeypatch.setenv("NO_COLOR", "")
+    f1, f2 = _diff_pair(tmp_path)
+    assert main(["diff", str(f1), str(f2)]) == 0
+    out, _ = capsys.readouterr()
+    assert "\033[" not in out
+
+
+def test_cli_diff_no_color_flag(capsys, tmp_path, monkeypatch):
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    f1, f2 = _diff_pair(tmp_path)
+    assert main(["diff", "--no-color", str(f1), str(f2)]) == 0
+    out, _ = capsys.readouterr()
+    assert "\033[" not in out
+    assert "-print('hello')" in out
+    assert "+print('world')" in out
+
+
+def test_cli_diff_global_no_color_flag(capsys, tmp_path, monkeypatch):
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    f1, f2 = _diff_pair(tmp_path)
+    assert main(["--no-color", "diff", str(f1), str(f2)]) == 0
+    out, _ = capsys.readouterr()
+    assert "\033[" not in out
+
+
+def test_cli_diff_host_only_no_color_env(capsys, tmp_path, monkeypatch):
+    monkeypatch.setenv("NO_COLOR", "1")
+    original = tmp_path / "original.py"
+    candidate = tmp_path / "candidate.py"
+    original.write_text('print("one")\n')
+    candidate.write_text('print("two")\n')
+    assert main(["diff", "--host-only", str(original), str(candidate)]) == 0
+    out, _ = capsys.readouterr()
+    assert "\033[" not in out
+    assert '-print("one")' in out
+    assert '+print("two")' in out
+
+
 def test_cli_verify_match(capsys):
     target = FIXTURES_DIR / "valid_plain.py"
     ret = main(["verify", str(target), str(target)])

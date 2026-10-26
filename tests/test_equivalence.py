@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from phantom.generator.diff import format_diff_colored
 from phantom.generator.equivalence import compare_behavior, host_ast_equal
 from phantom.generator.models import ComparisonVerdict
 from phantom.generator.validation import validate_candidate
@@ -113,3 +114,27 @@ def test_a_different_exception_message_is_still_a_difference():
     res = compare_behavior("raise ValueError('a')\n", "# x\nraise ValueError('b')\n")
     assert res.verdict == ComparisonVerdict.DIFFERENT
     assert "stderr differs" in res.differences
+
+
+class TestFormatDiffColored:
+    """format_diff_colored is what `phantom diff` prints (see test_cli.py)."""
+
+    DIFF = (
+        "--- a.py\n+++ b.py\n@@ -1 +1 @@\n-print('hello')\n+print('world')\n"
+        " print('same')\n"
+    )
+
+    def test_colored_wraps_added_removed_and_hunk_lines(self):
+        out = format_diff_colored(self.DIFF)
+        assert "\033[31m-print('hello')\033[0m" in out
+        assert "\033[32m+print('world')\033[0m" in out
+        assert "\033[36m@@ -1 +1 @@\033[0m" in out
+        assert " print('same')" in out
+        assert "\033[36m print('same')" not in out
+
+    def test_uncolored_returns_diff_text_unchanged(self):
+        assert format_diff_colored(self.DIFF, colored=False) == self.DIFF
+
+    def test_uncolored_empty_diff_stays_empty(self):
+        assert format_diff_colored("", colored=False) == ""
+        assert format_diff_colored("") == ""

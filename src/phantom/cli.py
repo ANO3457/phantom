@@ -29,7 +29,7 @@ from phantom.generator import (
     compare_behavior,
     generate,
 )
-from phantom.generator.diff import host_layer_diff
+from phantom.generator.diff import format_diff_colored, host_layer_diff
 from phantom.generator.provider import (
     LLMProvider,
     ProviderError,
@@ -522,6 +522,15 @@ def cmd_generate(args: argparse.Namespace, provider: LLMProvider | None = None) 
     return 0
 
 
+def _colors_enabled(args: argparse.Namespace) -> bool:
+    """Whether ANSI color output is allowed for this invocation.
+
+    Color is off when ``--no-color`` was passed or when the ``NO_COLOR``
+    environment variable is present with any value, per https://no-color.org.
+    """
+    return not getattr(args, "no_color", False) and os.environ.get("NO_COLOR") is None
+
+
 def cmd_diff(args: argparse.Namespace) -> int:
     """Unified diff between two source files."""
     orig_path = args.original
@@ -546,7 +555,12 @@ def cmd_diff(args: argparse.Namespace) -> int:
     cand_lines = split_physical_lines(cand_text, keepends=True)
 
     if args.host_only:
-        sys.stdout.write(host_layer_diff("".join(orig_lines), "".join(cand_lines)))
+        sys.stdout.write(
+            format_diff_colored(
+                host_layer_diff("".join(orig_lines), "".join(cand_lines)),
+                colored=_colors_enabled(args),
+            )
+        )
         return 0
 
     diff = list(
@@ -558,7 +572,7 @@ def cmd_diff(args: argparse.Namespace) -> int:
         )
     )
     if diff:
-        sys.stdout.writelines(diff)
+        sys.stdout.write(format_diff_colored("".join(diff), colored=_colors_enabled(args)))
     return 0
 
 
@@ -629,6 +643,12 @@ def create_parser() -> argparse.ArgumentParser:
         "-V",
         action="version",
         version=f"phantom {__version__}",
+    )
+    parser.add_argument(
+        "--no-color",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="Omit ANSI color escapes from output (same as setting NO_COLOR)",
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
@@ -731,6 +751,12 @@ def create_parser() -> argparse.ArgumentParser:
     diff_p.add_argument(
         "--host-only", action="store_true",
         help="Compare only the Python host layer, excluding Phantom instructions",
+    )
+    diff_p.add_argument(
+        "--no-color",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="Omit ANSI color escapes from the diff (same as setting NO_COLOR)",
     )
 
     # verify

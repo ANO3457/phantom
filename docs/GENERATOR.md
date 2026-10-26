@@ -54,6 +54,8 @@ phantom verify program.py candidate.py     # executes BOTH files — only for co
 
 `phantom diff --host-only` excludes the Phantom instruction layer using the existing host-layer diff helper. It only reads the files; it does not execute or modify either program. An empty diff indicates unchanged host text, not verified runtime equivalence. Without the flag, `phantom diff` continues to compare the complete source files.
 
+`phantom diff` colors added lines green, removed lines red, and hunk headers cyan. Pass `--no-color` (before or after `diff`, e.g. `phantom diff --no-color program.py candidate.py`) or set the `NO_COLOR` environment variable to any value (per https://no-color.org) to get plain diff output with no ANSI escapes.
+
 
 Running the candidate is a separate, explicit step by you (`phantom run candidate.py`).
 
