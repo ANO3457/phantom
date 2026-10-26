@@ -7,6 +7,8 @@
 [![license: MIT](https://img.shields.io/github/license/hayagrivai-labs/phantom)](LICENSE)
 [![python](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)](docs/COMPATIBILITY.md)
 [![good first issues](https://img.shields.io/github/issues/hayagrivai-labs/phantom/good%20first%20issue?label=good%20first%20issues&color=7057ff)](https://github.com/hayagrivai-labs/phantom/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[![first timers only](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](https://github.com/hayagrivai-labs/phantom/issues?q=is%3Aissue+is%3Aopen+label%3A%22first-timers-only%22)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![discussions](https://img.shields.io/github/discussions/hayagrivai-labs/phantom)](https://github.com/hayagrivai-labs/phantom/discussions)
 
 > **Contributors welcome.** New here? Pick a [good first issue](https://github.com/hayagrivai-labs/phantom/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22), read the [Contributor Guide](docs/CONTRIBUTOR_GUIDE.md), and say hello in [Discussions](https://github.com/hayagrivai-labs/phantom/discussions). Adding a new instruction takes four code edits. Issues labelled `mentor available` come with maintainer help. [Open in a Codespace](https://codespaces.new/hayagrivai-labs/phantom) for a ready-to-go environment.
