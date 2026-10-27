@@ -28,17 +28,11 @@ PROPERTY_SETTINGS = settings(
     suppress_health_check=[HealthCheck.too_slow],
 )
 
-# str.splitlines() also splits on these, Python's tokenizer does not. Strings containing
-# them do not survive a round trip yet (see issues #46 and #51), so they are excluded here
-# and covered by their own tests once that is fixed.
-_PYTHON_DISAGREES = "".join(chr(c) for c in (0x0B, 0x0C, 0x1C, 0x1D, 0x1E, 0x85, 0x2028, 0x2029))
-
-# Everything else, including quotes, backslashes, newlines, tabs, non-ASCII digits,
-# zero-width characters and astral code points, must round-trip exactly.
+# All Unicode scalar values, including Python line separators, must round-trip.
+# The property that builds Python source excludes NUL separately (see #75).
 strings = st.text(
     alphabet=st.characters(
         blacklist_categories=("Cs",),  # lone surrogates cannot be encoded as UTF-8
-        blacklist_characters=_PYTHON_DISAGREES,
     ),
     max_size=40,
 )
@@ -145,3 +139,19 @@ def test_invisible_encodings_keep_the_host_ast_unchanged(mode, inst):
     host = "x = 1\nprint(x)\n"
     candidate = encode_instruction(inst, mode) + "\n" + host
     assert ast.dump(ast.parse(host)) == ast.dump(ast.parse(candidate))
+
+
+@pytest.mark.parametrize("codepoint", [0x0B, 0x0C, 0x1C, 0x1D, 0x1E, 0x85, 0x2028, 0x2029])
+@pytest.mark.parametrize("mode", [EncodingMode.COMMENT, EncodingMode.WHITESPACE, EncodingMode.UNICODE])
+def test_line_separators_round_trip(codepoint, mode):
+    value = "before" + chr(codepoint) + "after"
+    inst = PhantomInstruction(
+        InstructionType.META_AUTHOR,
+        (Argument(ArgumentType.STRING, value),),
+        LOCATION,
+    )
+    program = parse(encode_instruction(inst, mode) + "\n", "<line-separator>")
+    assert program.errors == []
+    (parsed,) = program.instructions
+    assert parsed.type == inst.type
+    assert parsed.arguments[0].value == value
