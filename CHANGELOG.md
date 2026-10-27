@@ -23,6 +23,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 ### Documentation
 - `docs/CI.md`: using Phantom in CI (the reusable GitHub Action and `scripts/ci_check.sh`) and Phantom's own quality gates.
 - Add Hindi translations of the README and Quickstart guide.
+- Add a German translation of the Quickstart guide (`docs/de/QUICKSTART.md`).
 
 ### Added
 - `meta.tags(tags)` instruction: records keyword tags describing the probes, hooks, or diagnostics in the layer, as a single comma-separated string stored verbatim as metadata (capability `cap.metadata`); a second `meta.tags` is a validation warning, like the other `meta.*` instructions (#122).
