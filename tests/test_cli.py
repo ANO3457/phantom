@@ -199,6 +199,16 @@ def test_cli_run_invalid(capsys):
     assert "Validation failed" in err
 
 
+def test_cli_run_invalid_utf8(capsys, tmp_path):
+    bad = tmp_path / "bad_utf8.py"
+    bad.write_bytes(b"print('hello')\n# \xff\xfe\n")
+    ret = main(["run", str(bad)])
+    assert ret == 1
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert "is not valid UTF-8 (byte 0xff" in err
+
+
 def test_cli_run_timeout(capsys, tmp_path):
     script = tmp_path / "sleep_host.py"
     script.write_text("import time; time.sleep(5)\n")
