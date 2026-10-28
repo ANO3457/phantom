@@ -303,6 +303,9 @@ def cmd_run(args: argparse.Namespace) -> int:
         print("Error: --timeout must be positive", file=sys.stderr)
         return 1
 
+    if read_source(filepath) is None:
+        return 1
+
     # Extract extra arguments for host program
     host_args = list(args.host_args or [])
     if host_args and host_args[0] == "--":
