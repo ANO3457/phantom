@@ -26,6 +26,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - `docs/CI.md`: using Phantom in CI (the reusable GitHub Action and `scripts/ci_check.sh`) and Phantom's own quality gates.
 - Add Hindi translations of the README and Quickstart guide.
 - Add a German translation of the Quickstart guide (`docs/de/QUICKSTART.md`).
+- Add a Spanish translation of the Quickstart guide (`docs/es/QUICKSTART.md`)[#129](https://github.com/hayagrivai-labs/phantom/pull/129).
 
 ### Added
 - `generate --placement` accepts `near:Class.method` (before the single method of the single class of that name; ambiguous or missing classes and methods are reported, never guessed) and `main-guard` (before the first top-level `if __name__ == "__main__":` guard; `before-main-guard` is accepted as an alias) (#4).
