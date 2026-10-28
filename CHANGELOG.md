@@ -6,6 +6,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 
 ### Fixed
 - Property-based tests include all Unicode line separators after the lexer/decoder fixes, with explicit round-trip coverage in every encoding (#87).
+- A NUL character in a string argument no longer makes a comment encoded file invalid Python: encoders now escape every control character below U+0020 other than tab, line feed and carriage return as `\xNN`, and the parser decodes `\xNN` back to the original character, so the value round trips exactly; `SPECIFICATION.md` section 4 documents the new escape and which characters a string argument may contain (#75).
 - `check`, `inspect`, `verify`, `generate` and `diff` now read sources through one helper: a file that is not valid UTF-8 fails with `Error: '<file>' is not valid UTF-8 (byte 0x.. at position N)` and exit code 1, instead of a traceback (`verify`, `generate`) or silently replaced bytes (`check`, `inspect`, `diff`); a leading UTF-8 BOM is dropped everywhere (#54).
 - A leading UTF-8 BOM no longer silently hides the first instruction: `parse_file`, `check` and `inspect` read sources as `utf-8-sig`, so the BOM is dropped as Python does, and `check --strict` no longer reports it as U+FEFF (#44).
 - Source scanning uses Python physical line endings only (LF, CRLF, CR); strict audit flags NEL, line separator, and paragraph separator.
@@ -27,6 +28,7 @@ All notable changes to Phantom are documented here. The format follows [Keep a C
 - Add a German translation of the Quickstart guide (`docs/de/QUICKSTART.md`).
 
 ### Added
+- `generate --placement` accepts `near:Class.method` (before the single method of the single class of that name; ambiguous or missing classes and methods are reported, never guessed) and `main-guard` (before the first top-level `if __name__ == "__main__":` guard; `before-main-guard` is accepted as an alias) (#4).
 - `phantom inspect --json` output now carries top-level `schema` (`phantom.inspect`) and `schema_version` (`1.0`) fields so consuming tools can detect format changes; existing keys are unchanged (#21).
 - `meta.tags(tags)` instruction: records keyword tags describing the probes, hooks, or diagnostics in the layer, as a single comma-separated string stored verbatim as metadata (capability `cap.metadata`); a second `meta.tags` is a validation warning, like the other `meta.*` instructions (#122).
 - Bash and zsh shell completion scripts (`scripts/completions/phantom.bash`, `scripts/completions/phantom.zsh`): tab-complete subcommands and flags; source them from your shell startup file (see `docs/INSTALLATION.md`) (#103).
