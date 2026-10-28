@@ -330,7 +330,7 @@ def test_runtime_diagnostic_warn_instruction():
     assert len(diags) == 1
     assert diags[0].severity == Severity.WARNING
     assert diags[0].message == "Deprecated feature used"
-    assert str(diags[0]) == "[WARNING] [test.py:1:0] Deprecated feature used"
+    assert str(diags[0]) == f"[WARNING] [{loc}] Deprecated feature used"
 
 
 def test_runtime_initialize_program():
