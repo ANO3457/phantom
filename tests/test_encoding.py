@@ -167,5 +167,16 @@ def test_hybrid_precedence_dedupes_with_comment_first():
     assert decoded == ['phantom:0.1.0 diagnostic.note("same")']
 
 
+def test_hybrid_preserves_repeated_instructions_in_same_layer():
+    inst = '#: phantom:0.1.0 counter.increment("calls")'
+    source = f"{inst}\n{inst}\n"
+    decoded = HybridCodec.decode_instructions(source)
+    assert decoded == [
+        'phantom:0.1.0 counter.increment("calls")',
+        'phantom:0.1.0 counter.increment("calls")',
+    ]
+    assert decode_source(source, mode=EncodingMode.HYBRID) == decoded
+
+
 def test_trailing_whitespace_on_source_does_not_create_instructions():
     assert decode_source("x = 1   \n\t\n   \n") == []
