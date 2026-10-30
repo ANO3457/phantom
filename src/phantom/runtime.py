@@ -166,6 +166,15 @@ class PhantomRuntime:
                     else:
                         self.increment_counter(name)
 
+                elif inst.type == InstructionType.COUNTER_DECREMENT:
+                    name = inst.get_string_arg(0)
+                    if not name:
+                        errors.append(
+                            RuntimeError("counter.decrement requires a counter name argument")
+                        )
+                    else:
+                        self.decrement_counter(name)
+
                 elif inst.type == InstructionType.COUNTER_RESET:
                     name = inst.get_string_arg(0)
                     if not name:
@@ -418,6 +427,26 @@ class PhantomRuntime:
             return limit
 
         new_val = current + 1
+        self._counters[name] = (new_val, limit)
+        return new_val
+
+    def decrement_counter(self, name: str) -> int:
+        """Decrement a bounded counter by one, returning the new value.
+
+        If decrementing would go below 0, a diagnostic is recorded and the
+        counter remains at 0.
+        """
+        self._capabilities.require(Capability.COUNTERS)
+        if name not in self._counters:
+            raise RuntimeError(f"Counter '{name}' does not exist")
+
+        current, limit = self._counters[name]
+        if current <= 0:
+            msg = f"RuntimeError: Counter '{name}' decremented below 0"
+            self.add_diagnostic(msg, severity=Severity.WARNING)
+            return 0
+
+        new_val = current - 1
         self._counters[name] = (new_val, limit)
         return new_val
 
