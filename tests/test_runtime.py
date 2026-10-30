@@ -663,3 +663,17 @@ def test_runtime_execute_host_timeout(tmp_path):
     res = runtime.execute_host(str(script), timeout=0.2)
     assert res.exit_code == 124
     assert "timed out" in res.stderr.lower()
+
+
+def test_runtime_execute_host_restores_sys_path(tmp_path):
+    sub = tmp_path / "custom_host_dir"
+    sub.mkdir()
+    script = sub / "test_prog.py"
+    script.write_text("print('hello')\n")
+    runtime = PhantomRuntime()
+    orig_path = list(sys.path)
+    assert str(sub) not in sys.path
+    res = runtime.execute_host(str(script))
+    assert res.exit_code == 0
+    assert str(sub) not in sys.path
+    assert sys.path == orig_path

@@ -223,18 +223,28 @@ class PhantomRuntime:
         import os
 
         host_dir = os.path.dirname(os.path.abspath(host_file))
+        orig_sys_path = list(sys.path)
+        inserted = False
         if host_dir not in sys.path:
             sys.path.insert(0, host_dir)
+            inserted = True
 
-        # Fire pre-execute lifecycle event
-        self.fire_event("phantom.pre_execute", host_file=host_file, args=args or [])
+        try:
+            # Fire pre-execute lifecycle event
+            self.fire_event("phantom.pre_execute", host_file=host_file, args=args or [])
 
-        result = execute_host_program(host_file, args=args, timeout=timeout)
+            result = execute_host_program(host_file, args=args, timeout=timeout)
 
-        # Fire post-execute lifecycle event
-        self.fire_event("phantom.post_execute", host_file=host_file, result=result)
+            # Fire post-execute lifecycle event
+            self.fire_event("phantom.post_execute", host_file=host_file, result=result)
 
-        return result
+            return result
+        finally:
+            if inserted:
+                try:
+                    sys.path.remove(host_dir)
+                except ValueError:
+                    sys.path[:] = orig_sys_path
 
     def shutdown(self) -> None:
         """Fire phantom.shutdown event, clean up resources."""
