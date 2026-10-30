@@ -210,6 +210,8 @@ class WhitespaceDecoder:
                 lines.append(line)
         if not found_block:
             raise ValueError("No whitespace block start marker found")
+        if in_block:
+            raise ValueError("Unterminated whitespace block: missing end marker")
         return cls.decode(lines)
 
 
@@ -325,6 +327,8 @@ class UnicodeDecoder:
                         collected.append(ch)
         if not found_block:
             raise ValueError("No zero-width block start marker found")
+        if in_block:
+            raise ValueError("Unterminated zero-width block: missing end marker")
         return cls.decode("".join(collected), strict=strict)
 
 

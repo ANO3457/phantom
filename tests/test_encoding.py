@@ -106,6 +106,13 @@ def test_whitespace_block_roundtrip():
     assert WhitespaceDecoder.decode_block(block) == TEXT
 
 
+def test_whitespace_decode_block_unterminated_raises():
+    block = WhitespaceEncoder.encode_block(TEXT)
+    unterminated = "\n".join([line for line in block.splitlines() if "#:ws:end" not in line])
+    with pytest.raises(ValueError, match="Unterminated whitespace block"):
+        WhitespaceDecoder.decode_block(unterminated)
+
+
 def test_unicode_roundtrip_and_alphabet():
     encoded = UnicodeEncoder.encode(TEXT)
     assert len(encoded) == 4 * len(TEXT.encode("utf-8"))
@@ -124,6 +131,13 @@ def test_unicode_block_is_valid_python_comment():
     block = UnicodeEncoder.encode_block(TEXT)
     ast.parse(block)
     assert UnicodeDecoder.decode_block(block, strict=True) == TEXT
+
+
+def test_unicode_decode_block_unterminated_raises():
+    block = UnicodeEncoder.encode_block(TEXT)
+    unterminated = "\n".join([line for line in block.splitlines() if "#:zw:end" not in line])
+    with pytest.raises(ValueError, match="Unterminated zero-width block"):
+        UnicodeDecoder.decode_block(unterminated)
 
 
 def test_whitespace_block_survives_python_parse():
