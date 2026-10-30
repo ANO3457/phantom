@@ -109,6 +109,13 @@ def validate(program: PhantomProgram) -> list[ValidationError]:
                         Severity.WARNING,
                     )
 
+        elif inst.type == InstructionType.COUNTER_DECREMENT:
+            name = inst.get_string_arg(0) or ""
+            if name not in counters:
+                add(f"Counter '{name}' decremented before it is created", inst)
+            else:
+                increments[name] = max(0, increments.get(name, 0) - 1)
+
         elif inst.type == InstructionType.COUNTER_RESET:
             name = inst.get_string_arg(0) or ""
             if name not in counters:
