@@ -124,6 +124,32 @@ def test_fish_completion_script_covers_cli():
     assert "sarif" in text, "fish completions miss the sarif output format"
 
 
+POWERSHELL_COMPLETION = ROOT / "scripts" / "completions" / "phantom.ps1"
+EXPECTED_POWERSHELL_SUBCOMMANDS = ("check", "inspect", "run", "generate", "diff", "verify")
+EXPECTED_POWERSHELL_FLAGS = {
+    "check": ("strict", "format", "deny", "allow-only"),
+    "inspect": ("json", "strict", "deny", "allow-only"),
+    "run": ("timeout", "deny", "allow-only", "handlers-from", "allow-handler"),
+    "generate": ("stdin", "intent", "placement", "encoding", "output", "dry-run", "provider", "plan-file", "allow-remote"),
+    "diff": ("host-only", "no-color"),
+    "verify": ("timeout",),
+}
+EXPECTED_POWERSHELL_VALUES = ("sarif", "whitespace", "unicode")
+
+
+def test_powershell_completion_script_covers_cli():
+    assert POWERSHELL_COMPLETION.exists(), "scripts/completions/phantom.ps1 is missing"
+    text = POWERSHELL_COMPLETION.read_text(encoding="utf-8")
+    for subcommand in EXPECTED_POWERSHELL_SUBCOMMANDS:
+        assert f"'{subcommand}'" in text, f"powershell completions miss subcommand {subcommand}"
+        for flag in EXPECTED_POWERSHELL_FLAGS[subcommand]:
+            assert f"--{flag}" in text, (
+                f"powershell completions miss --{flag} scoped to {subcommand}"
+            )
+    for value in EXPECTED_POWERSHELL_VALUES:
+        assert value in text, f"powershell completions miss the {value} value"
+
+
 # Nano syntax highlighting for the Phantom instruction layer must exist and
 # cover the documented instruction keywords and encoding markers (#121).
 NANORC = ROOT / "scripts" / "syntax" / "phantom.nanorc"

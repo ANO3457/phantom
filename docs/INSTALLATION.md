@@ -166,6 +166,13 @@ After that, `phantom <TAB>` suggests the subcommands (`check`,
 `phantom check --<TAB>` or `phantom run --<TAB>` suggest that
 subcommand's flags.
 
+PowerShell users get tab completion for subcommands and flags from
+`scripts/completions/phantom.ps1`. Dot-source the script in your PowerShell profile (`$PROFILE`):
+
+```powershell
+. <path-to-phantom>/scripts/completions/phantom.ps1
+```
+
 ## Pre-commit Integration
 
 Phantom ships a `.pre-commit-hooks.yaml`, so it can run automatically before
