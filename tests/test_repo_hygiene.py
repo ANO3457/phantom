@@ -139,6 +139,7 @@ PHANTOM_NANO_INSTRUCTIONS = (
     "meta.author",
     "meta.version",
     "meta.license",
+    "meta.tags",
 )
 PHANTOM_NANO_MARKERS = ("#:ws:begin", "#:ws:end", "#:zw:begin", "#:zw:end", "#:phantom:hybrid")
 

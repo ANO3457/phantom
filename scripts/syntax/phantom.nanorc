@@ -41,7 +41,7 @@ color brightmagenta "^[[:space:]]*@[A-Za-z_][A-Za-z0-9_.]*"
 ## Instruction prefix: #: phantom:<version> ...
 color brightcyan "^[[:space:]]*#:[[:space:]]*phantom:[0-9]+\.[0-9]+\.[0-9]+.*$"
 ## Instruction keywords
-color brightyellow "\<(event\.declare|event\.on|diagnostic\.note|diagnostic\.warn|counter\.create|counter\.increment|counter\.decrement|counter\.reset|meta\.author|meta\.version|meta\.license)\>"
+color brightyellow "\<(event\.declare|event\.on|diagnostic\.note|diagnostic\.warn|counter\.create|counter\.increment|counter\.decrement|counter\.reset|meta\.author|meta\.version|meta\.license|meta\.tags)\>"
 ## Encoding block markers
 color magenta "^[[:space:]]*#:ws:begin.*$"
 color magenta "^[[:space:]]*#:zw:begin.*$"
